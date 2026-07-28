@@ -1,8 +1,8 @@
 """NetBIOS name service scanner (UDP port 137)."""
+
 from __future__ import annotations
 
 import asyncio
-import struct
 
 from netscanx.models import ServiceInfo
 
@@ -13,9 +13,9 @@ _NBSTAT_REQUEST = (
     b"\x00\x00"  # Answer RRs
     b"\x00\x00"  # Authority RRs
     b"\x00\x00"  # Additional RRs
-    b"\x20"      # Name length: 32
+    b"\x20"  # Name length: 32
     + b"CKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"  # Encoded "*"
-    + b"\x00"    # Name terminator
+    + b"\x00"  # Name terminator
     b"\x00\x21"  # Type: NBSTAT
     b"\x00\x01"  # Class: IN
 )
@@ -88,7 +88,6 @@ def _parse_nbstat(data: bytes) -> dict | None:
                 break
             raw_name = data[offset : offset + 15].rstrip(b"\x00 ").decode("ascii", errors="ignore")
             name_type = data[offset + 15]
-            flags = struct.unpack(">H", data[offset + 16 : offset + 18])[0]
             names.append(raw_name)
             if name_type == 0x00 and not workgroup:
                 workgroup = raw_name

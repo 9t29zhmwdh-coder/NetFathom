@@ -61,9 +61,7 @@ class DeviceSnapshot(Base):
     scan_run_id: Mapped[int] = mapped_column(
         ForeignKey("scan_runs.id", ondelete="CASCADE"), index=True
     )
-    device_id: Mapped[int] = mapped_column(
-        ForeignKey("devices.id", ondelete="CASCADE"), index=True
-    )
+    device_id: Mapped[int] = mapped_column(ForeignKey("devices.id", ondelete="CASCADE"), index=True)
 
     ip: Mapped[str | None] = mapped_column(String(45), nullable=True)
     mac: Mapped[str | None] = mapped_column(String(17), nullable=True)
@@ -88,9 +86,7 @@ class ChangeEvent(Base):
     scan_run_id: Mapped[int] = mapped_column(
         ForeignKey("scan_runs.id", ondelete="CASCADE"), index=True
     )
-    device_id: Mapped[int] = mapped_column(
-        ForeignKey("devices.id", ondelete="CASCADE"), index=True
-    )
+    device_id: Mapped[int] = mapped_column(ForeignKey("devices.id", ondelete="CASCADE"), index=True)
     # one of: new_device, device_gone, port_opened, port_closed, hostname_changed,
     # os_guess_changed, ip_changed, mac_changed, vendor_changed, service_added,
     # service_removed, firmware_changed

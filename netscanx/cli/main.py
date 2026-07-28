@@ -1,6 +1,16 @@
 import click
 from rich.console import Console
 
+from netscanx.cli.assets import assets
+from netscanx.cli.baseline import baseline
+from netscanx.cli.changes import changes
+from netscanx.cli.dashboard import dashboard
+from netscanx.cli.diagnose import diagnose
+from netscanx.cli.discover import discover
+from netscanx.cli.health import health
+from netscanx.cli.services import services
+from netscanx.cli.speedtest import speedtest
+
 console = Console()
 
 
@@ -22,16 +32,6 @@ def cli() -> None:
       health     Run local or network health checks
     """
 
-
-from netscanx.cli.discover import discover
-from netscanx.cli.diagnose import diagnose
-from netscanx.cli.services import services
-from netscanx.cli.speedtest import speedtest
-from netscanx.cli.dashboard import dashboard
-from netscanx.cli.baseline import baseline
-from netscanx.cli.changes import changes
-from netscanx.cli.assets import assets
-from netscanx.cli.health import health
 
 cli.add_command(discover)
 cli.add_command(services)

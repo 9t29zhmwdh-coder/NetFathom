@@ -9,7 +9,6 @@ from rich import box
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from rich.text import Text
 
 from netscanx.health.models import HealthReport
 from netscanx.models import (
@@ -120,10 +119,12 @@ def print_services(result: ServicesResult) -> None:
 
 
 def print_speedtest(result: SpeedtestResult) -> None:
-    console.print(Panel.fit(
-        f"[bold]Speedtest: {result.host}:{result.port}[/bold]",
-        border_style="blue",
-    ))
+    console.print(
+        Panel.fit(
+            f"[bold]Speedtest: {result.host}:{result.port}[/bold]",
+            border_style="blue",
+        )
+    )
 
     if result.latency:
         lat = result.latency
@@ -137,14 +138,22 @@ def print_speedtest(result: SpeedtestResult) -> None:
 
     if result.tcp:
         tcp = result.tcp
-        console.print(f"\n[bold]TCP Throughput[/bold]")
+        console.print("\n[bold]TCP Throughput[/bold]")
         console.print(f"  Speed:     [green]{tcp.mbps:.2f} Mbit/s[/green]")
-        console.print(f"  Sent:      {tcp.bytes_transferred / 1_048_576:.2f} MiB in {tcp.duration_s:.1f}s")
+        console.print(
+            f"  Sent:      {tcp.bytes_transferred / 1_048_576:.2f} MiB in {tcp.duration_s:.1f}s"
+        )
 
     if result.udp:
         udp = result.udp
-        loss_color = "green" if (udp.packet_loss_pct or 0) < 1 else "yellow" if (udp.packet_loss_pct or 0) < 5 else "red"
-        console.print(f"\n[bold]UDP Throughput[/bold]")
+        loss_color = (
+            "green"
+            if (udp.packet_loss_pct or 0) < 1
+            else "yellow"
+            if (udp.packet_loss_pct or 0) < 5
+            else "red"
+        )
+        console.print("\n[bold]UDP Throughput[/bold]")
         console.print(f"  Speed:     [green]{udp.mbps:.2f} Mbit/s[/green]")
         console.print(f"  Loss:      [{loss_color}]{udp.packet_loss_pct:.1f}%[/{loss_color}]")
         console.print(f"  Packets:   {udp.packets_received}/{udp.packets_sent} received")
@@ -157,10 +166,12 @@ def print_diagnostic(report: DiagnosticReport) -> None:
     _status_color = {"ok": "green", "warning": "yellow", "error": "red", "skipped": "dim"}
     _status_icon = {"ok": "✓", "warning": "!", "error": "✗", "skipped": "-"}
 
-    console.print(Panel.fit(
-        f"[bold]Diagnostic Report: {report.target}[/bold]",
-        border_style="blue",
-    ))
+    console.print(
+        Panel.fit(
+            f"[bold]Diagnostic Report: {report.target}[/bold]",
+            border_style="blue",
+        )
+    )
 
     table = Table(box=box.SIMPLE, show_header=False, padding=(0, 1))
     table.add_column("Icon", width=3)
@@ -215,9 +226,7 @@ def print_changes(changes: list[dict]) -> None:
         console.print("[green]No changes detected.[/green]")
         return
 
-    table = Table(
-        title=f"NetScanX Change Report ({len(changes)} changes)", box=box.ROUNDED
-    )
+    table = Table(title=f"NetScanX Change Report ({len(changes)} changes)", box=box.ROUNDED)
     table.add_column("Device", style="cyan", min_width=15)
     table.add_column("Change", min_width=16)
     table.add_column("Field", style="dim", max_width=15)
@@ -246,11 +255,13 @@ def print_health(report: HealthReport) -> None:
     _status_icon = {"ok": "✓", "warning": "!", "error": "✗", "skipped": "-"}
 
     score_color = "green" if report.score >= 80 else "yellow" if report.score >= 50 else "red"
-    console.print(Panel.fit(
-        f"[bold]Health Report: {report.target}[/bold]\n"
-        f"Health Score: [{score_color}]{report.score}/100[/{score_color}]",
-        border_style="blue",
-    ))
+    console.print(
+        Panel.fit(
+            f"[bold]Health Report: {report.target}[/bold]\n"
+            f"Health Score: [{score_color}]{report.score}/100[/{score_color}]",
+            border_style="blue",
+        )
+    )
 
     table = Table(box=box.SIMPLE, show_header=False, padding=(0, 1))
     table.add_column("Icon", width=3)

@@ -1,20 +1,42 @@
 """Layer-4 scanner: TCP connect, TCP SYN, UDP scan, banner grabbing."""
+
 from __future__ import annotations
 
 import asyncio
-import socket
 
-from netscanx.models import Host, Port, PortState, Protocol
-from netscanx.scanner.privileges import is_root, require_root
+from netscanx.models import Port, PortState, Protocol
+from netscanx.scanner.privileges import require_root
 
 _WELL_KNOWN: dict[int, str] = {
-    21: "ftp", 22: "ssh", 23: "telnet", 25: "smtp", 53: "dns",
-    80: "http", 110: "pop3", 143: "imap", 389: "ldap", 443: "https",
-    445: "smb", 465: "smtps", 587: "submission", 636: "ldaps",
-    993: "imaps", 995: "pop3s", 1194: "openvpn", 1433: "mssql",
-    1723: "pptp", 2049: "nfs", 3306: "mysql", 3389: "rdp",
-    5432: "postgresql", 5900: "vnc", 6379: "redis", 8080: "http-alt",
-    8443: "https-alt", 9200: "elasticsearch", 27017: "mongodb",
+    21: "ftp",
+    22: "ssh",
+    23: "telnet",
+    25: "smtp",
+    53: "dns",
+    80: "http",
+    110: "pop3",
+    143: "imap",
+    389: "ldap",
+    443: "https",
+    445: "smb",
+    465: "smtps",
+    587: "submission",
+    636: "ldaps",
+    993: "imaps",
+    995: "pop3s",
+    1194: "openvpn",
+    1433: "mssql",
+    1723: "pptp",
+    2049: "nfs",
+    3306: "mysql",
+    3389: "rdp",
+    5432: "postgresql",
+    5900: "vnc",
+    6379: "redis",
+    8080: "http-alt",
+    8443: "https-alt",
+    9200: "elasticsearch",
+    27017: "mongodb",
 }
 
 
@@ -142,7 +164,7 @@ class UDPScanner:
 
     async def scan_host(self, host: str, ports: list[int]) -> list[Port]:
         try:
-            from scapy.all import IP, UDP, ICMP, sr  # type: ignore
+            from scapy.all import ICMP, IP, UDP, sr  # type: ignore
 
             pkts = [IP(dst=host) / UDP(dport=p) for p in ports]
             answered, _ = await asyncio.to_thread(

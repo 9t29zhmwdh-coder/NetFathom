@@ -19,6 +19,4 @@ class WMIEnricher:
         self.credential_service_name = credential_service_name
 
     async def enrich_host(self, host: Host) -> Host:
-        raise NotImplementedError(
-            "WMI enrichment is planned for a future release; see ROADMAP.md"
-        )
+        raise NotImplementedError("WMI enrichment is planned for a future release; see ROADMAP.md")

@@ -7,6 +7,7 @@ a bare CLI console is not a useful default for a non-technical "plug in the
 USB stick and click the launcher" workflow. Running it from a terminal with
 arguments still exposes the full CLI (discover, services, diagnose,
 baseline, changes, assets, health, dashboard)."""
+
 from __future__ import annotations
 
 import sys

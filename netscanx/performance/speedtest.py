@@ -1,4 +1,5 @@
 """P2P speedtest: TCP throughput, UDP packet loss, latency/jitter, MTU detection."""
+
 from __future__ import annotations
 
 import asyncio
@@ -6,7 +7,7 @@ import os
 import struct
 import time
 
-from netscanx.models import LatencyStats, SpeedtestResult, ThroughputResult
+from netscanx.models import SpeedtestResult, ThroughputResult
 from netscanx.scanner.layer3 import ping_stats
 
 _TCP_PORT = 15101
@@ -156,9 +157,7 @@ class SpeedtestClient:
                     pass
 
                 try:
-                    data, _ = await asyncio.wait_for(
-                        loop.sock_recvfrom(sock, 4096), timeout=0.05
-                    )
+                    data, _ = await asyncio.wait_for(loop.sock_recvfrom(sock, 4096), timeout=0.05)
                     if data[:8] == _MAGIC:
                         received += 1
                 except asyncio.TimeoutError:

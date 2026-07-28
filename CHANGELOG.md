@@ -5,6 +5,14 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-07-28
+
+### Fixed
+
+- CI ran `ruff check . --select E9,F821,F822,F823`, which overrode the `select = ["E", "F", "W", "I"]` configured in `pyproject.toml`. Only syntax errors and undefined names were ever checked, so the configuration described a standard the pipeline did not apply, and a green run said less than it appeared to. CI now runs the configured rule set and a `ruff format --check` that did not exist before. See `engineering-standards` `standards/ci-cd.md` section 3: a stage is fixed, not scoped down.
+- The 33 findings this surfaced: 11 unused imports, 9 module-level imports below other code in `cli/main.py`, 6 unsorted import blocks, 3 unused local variables, 3 f-strings without placeholders, and one ambiguous variable name `l`. The imports in `main.py` sat below the `cli()` group definition, which is a common Click pattern to avoid a circular import; verified here that no subcommand module imports from `main`, so moving them to the top is safe. 51 tests pass and the CLI still registers all nine subcommands.
+- `[tool.ruff] select` moved to `[tool.ruff.lint] select`, which ruff has been warning about as deprecated.
+
 ## [1.0.2] - 2026-07-28
 
 ### Added

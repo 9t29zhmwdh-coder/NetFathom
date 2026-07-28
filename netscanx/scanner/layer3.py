@@ -1,10 +1,10 @@
 """Layer-3 scanner: ICMP ping sweep, MTU detection, IP conflict detection."""
+
 from __future__ import annotations
 
 import asyncio
 import ipaddress
 import platform
-import socket
 import statistics
 import time
 
@@ -106,6 +106,7 @@ async def _single_ping(host: str, timeout: float = 2.0) -> bool:
     if is_root():
         try:
             import icmplib  # type: ignore
+
             result = await asyncio.to_thread(
                 icmplib.ping, host, count=1, timeout=int(timeout), privileged=True
             )
@@ -139,9 +140,7 @@ async def detect_mtu(host: str, min_size: int = 576, max_size: int = 9000) -> in
             mid = (low + high) // 2
             payload = b"X" * (mid - 28)
             pkt = IP(dst=host, flags="DF") / ICMP() / payload
-            resp = await asyncio.to_thread(
-                lambda: sr1(pkt, timeout=2, verbose=False)
-            )
+            resp = await asyncio.to_thread(lambda: sr1(pkt, timeout=2, verbose=False))
             if resp is not None:
                 last_ok = mid
                 low = mid + 1
@@ -160,9 +159,7 @@ async def check_ip_conflict(ip: str) -> bool:
         from scapy.all import ARP, Ether, srp  # type: ignore
 
         pkt = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(op=1, pdst=ip)
-        answered, _ = await asyncio.to_thread(
-            lambda: srp(pkt, timeout=2, verbose=False)
-        )
+        answered, _ = await asyncio.to_thread(lambda: srp(pkt, timeout=2, verbose=False))
         return len(answered) > 1
     except Exception:
         return False

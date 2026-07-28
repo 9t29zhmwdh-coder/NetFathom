@@ -9,6 +9,7 @@ def is_root() -> bool:
     if sys.platform == "win32":
         try:
             import ctypes
+
             return bool(ctypes.windll.shell32.IsUserAnAdmin())
         except Exception:
             return False

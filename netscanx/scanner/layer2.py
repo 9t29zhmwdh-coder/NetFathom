@@ -1,4 +1,5 @@
 """Layer-2 scanner: ARP sweep, ARP cache, MAC vendor, DHCP lease parsing."""
+
 from __future__ import annotations
 
 import asyncio
@@ -72,8 +73,11 @@ class ARPScanner:
 
 def _ping_cmd(host: str, count: int) -> list[str]:
     flag = "-n" if platform.system() == "Windows" else "-c"
-    return ["ping", flag, str(count), "-W", "1", host] if platform.system() != "Windows" \
+    return (
+        ["ping", flag, str(count), "-W", "1", host]
+        if platform.system() != "Windows"
         else ["ping", flag, str(count), "-w", "1000", host]
+    )
 
 
 async def get_arp_cache() -> list[Host]:

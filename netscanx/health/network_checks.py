@@ -2,6 +2,7 @@
 credentials, reusing existing scan primitives. Deliberately a lightweight
 set of red flags, NOT the full deferred Risk Scoring engine (see
 ROADMAP.md). Weights sum to 100 across this check set."""
+
 from __future__ import annotations
 
 import asyncio
@@ -21,7 +22,11 @@ class NetworkHealthRunner:
 
     async def run_all(self) -> HealthReport:
         report = HealthReport(target=self.host.ip)
-        checks = [self._check_reachability(), self._check_risky_ports(), self._check_open_port_count()]
+        checks = [
+            self._check_reachability(),
+            self._check_risky_ports(),
+            self._check_open_port_count(),
+        ]
         if self.host.hostname:
             checks.append(self._check_dns_response())
         results = await asyncio.gather(*checks, return_exceptions=True)
@@ -37,7 +42,10 @@ class NetworkHealthRunner:
             stats = await ping_stats(self.host.ip, count=5, interval=0.2)
         except Exception as e:
             return HealthCheck(
-                name="Reachability", status="error", message=f"Unreachable: {e}", weight=30,
+                name="Reachability",
+                status="error",
+                message=f"Unreachable: {e}",
+                weight=30,
             )
         if stats.packet_loss_pct >= 100:
             status = "error"
@@ -46,7 +54,8 @@ class NetworkHealthRunner:
         else:
             status = "ok"
         return HealthCheck(
-            name="Reachability", status=status,
+            name="Reachability",
+            status=status,
             message=f"{stats.avg_ms:.0f}ms avg, {stats.packet_loss_pct:.0f}% loss",
             weight=30,
         )
@@ -58,11 +67,17 @@ class NetworkHealthRunner:
             ms = (time.monotonic() - t0) * 1000
             status = "warning" if ms > 500 else "ok"
             return HealthCheck(
-                name="DNS Response", status=status, message=f"{ms:.0f}ms", weight=20,
+                name="DNS Response",
+                status=status,
+                message=f"{ms:.0f}ms",
+                weight=20,
             )
         except Exception as e:
             return HealthCheck(
-                name="DNS Response", status="warning", message=f"Resolution failed: {e}", weight=20,
+                name="DNS Response",
+                status="warning",
+                message=f"Resolution failed: {e}",
+                weight=20,
             )
 
     async def _check_risky_ports(self) -> HealthCheck:
@@ -72,10 +87,14 @@ class NetworkHealthRunner:
         ]
         if found:
             return HealthCheck(
-                name="Risky Ports", status="warning",
-                message=f"Legacy/insecure protocol(s) open: {', '.join(found)}", weight=30,
+                name="Risky Ports",
+                status="warning",
+                message=f"Legacy/insecure protocol(s) open: {', '.join(found)}",
+                weight=30,
             )
-        return HealthCheck(name="Risky Ports", status="ok", message="No legacy protocols detected", weight=30)
+        return HealthCheck(
+            name="Risky Ports", status="ok", message="No legacy protocols detected", weight=30
+        )
 
     async def _check_open_port_count(self) -> HealthCheck:
         count = len(self.host.open_ports)

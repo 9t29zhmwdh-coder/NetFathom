@@ -30,11 +30,17 @@ class InventoryRepository:
             select(Device).where(Device.last_ip == ip, Device.last_seen >= cutoff)
         )
         for candidate in result.scalars().all():
-            if hostname is None or candidate.last_hostname is None or candidate.last_hostname == hostname:
+            if (
+                hostname is None
+                or candidate.last_hostname is None
+                or candidate.last_hostname == hostname
+            ):
                 return candidate
         return None
 
-    async def create_device(self, mac: str | None, is_mac_randomized: bool, now: datetime) -> Device:
+    async def create_device(
+        self, mac: str | None, is_mac_randomized: bool, now: datetime
+    ) -> Device:
         device = Device(
             primary_mac=mac, is_mac_randomized=is_mac_randomized, first_seen=now, last_seen=now
         )
@@ -48,7 +54,9 @@ class InventoryRepository:
 
     # -- scan runs ----------------------------------------------------------
 
-    async def create_scan_run(self, target: str, scan_types: list[str], started_at: datetime) -> ScanRun:
+    async def create_scan_run(
+        self, target: str, scan_types: list[str], started_at: datetime
+    ) -> ScanRun:
         run = ScanRun(
             target=target,
             started_at=started_at,
@@ -72,7 +80,12 @@ class InventoryRepository:
     async def get_latest_scan_run(self, exclude_run_id: int | None = None) -> ScanRun | None:
         stmt = select(ScanRun).order_by(ScanRun.id.desc()).limit(1)
         if exclude_run_id is not None:
-            stmt = select(ScanRun).where(ScanRun.id != exclude_run_id).order_by(ScanRun.id.desc()).limit(1)
+            stmt = (
+                select(ScanRun)
+                .where(ScanRun.id != exclude_run_id)
+                .order_by(ScanRun.id.desc())
+                .limit(1)
+            )
         result = await self._session.execute(stmt)
         return result.scalar_one_or_none()
 

@@ -1,4 +1,5 @@
 """FastAPI dashboard server for NetScanX."""
+
 from __future__ import annotations
 
 import asyncio
@@ -48,6 +49,7 @@ class SpeedtestRequest(BaseModel):
     @classmethod
     def validate_count(cls, v: int) -> int:
         return max(1, min(v, 50))
+
 
 _STATIC = Path(__file__).parent / "static"
 
@@ -242,7 +244,9 @@ async def _background_scan():
 
     if discover_result is not None:
         try:
-            _run, change_records = await _inventory.persist_results(discover_result, services_result)
+            _run, change_records = await _inventory.persist_results(
+                discover_result, services_result
+            )
             if change_records:
                 devices = {d.id: d for d in await _inventory.list_assets()}
                 changes = await _inventory.get_changes()

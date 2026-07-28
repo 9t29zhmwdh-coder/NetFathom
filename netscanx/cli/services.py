@@ -1,4 +1,5 @@
 """netscanx services: mDNS, SSDP, NetBIOS, SNMP discovery."""
+
 from __future__ import annotations
 
 import asyncio
@@ -19,16 +20,36 @@ console = Console(stderr=True)
 @click.option("--mdns/--no-mdns", default=True, help="mDNS/Zeroconf discovery")
 @click.option("--ssdp/--no-ssdp", default=True, help="SSDP/UPnP discovery")
 @click.option("--netbios/--no-netbios", default=True, help="NetBIOS name scan")
-@click.option("--snmp/--no-snmp", default=False,
-              help='SNMP v2c scan (community "public" by default)')
-@click.option("--community", default="public", metavar="STRING",
-              help="SNMP community string [default: public]")
-@click.option("--mdns-timeout", default=5.0, type=float, metavar="SEC",
-              help="mDNS browse duration [default: 5.0]")
-@click.option("--ssdp-timeout", default=4.0, type=float, metavar="SEC",
-              help="SSDP listen duration [default: 4.0]")
-@click.option("--format", "fmt", default="table",
-              type=click.Choice(["table", "json", "yaml"]), help="Output format")
+@click.option(
+    "--snmp/--no-snmp", default=False, help='SNMP v2c scan (community "public" by default)'
+)
+@click.option(
+    "--community",
+    default="public",
+    metavar="STRING",
+    help="SNMP community string [default: public]",
+)
+@click.option(
+    "--mdns-timeout",
+    default=5.0,
+    type=float,
+    metavar="SEC",
+    help="mDNS browse duration [default: 5.0]",
+)
+@click.option(
+    "--ssdp-timeout",
+    default=4.0,
+    type=float,
+    metavar="SEC",
+    help="SSDP listen duration [default: 4.0]",
+)
+@click.option(
+    "--format",
+    "fmt",
+    default="table",
+    type=click.Choice(["table", "json", "yaml"]),
+    help="Output format",
+)
 def services(
     target: str | None,
     mdns: bool,
@@ -52,17 +73,19 @@ def services(
       netscanx services 192.168.1.0/24 --netbios --snmp
       netscanx services --no-mdns --ssdp --format json
     """
-    asyncio.run(_run(
-        target=target or _local_net(),
-        do_mdns=mdns,
-        do_ssdp=ssdp,
-        do_netbios=netbios,
-        do_snmp=snmp,
-        community=community,
-        mdns_timeout=mdns_timeout,
-        ssdp_timeout=ssdp_timeout,
-        fmt=fmt,
-    ))
+    asyncio.run(
+        _run(
+            target=target or _local_net(),
+            do_mdns=mdns,
+            do_ssdp=ssdp,
+            do_netbios=netbios,
+            do_snmp=snmp,
+            community=community,
+            mdns_timeout=mdns_timeout,
+            ssdp_timeout=ssdp_timeout,
+            fmt=fmt,
+        )
+    )
 
 
 async def _run(
@@ -107,10 +130,9 @@ async def run_services_scan(
 ) -> ServicesResult:
     """Run a full services scan and return the result. Used by the CLI and the dashboard."""
     from netscanx.discovery.mdns import MDNSDiscovery
-    from netscanx.discovery.ssdp import SSDPScanner
     from netscanx.discovery.netbios import NetBIOSScanner
     from netscanx.discovery.snmp import SNMPScanner
-    from netscanx.scanner.layer2 import get_arp_cache
+    from netscanx.discovery.ssdp import SSDPScanner
 
     t0 = time.monotonic()
     all_services = []
@@ -162,7 +184,6 @@ async def _ssdp_task(scanner) -> list:
 async def _collect_ips(target: str) -> list[str]:
     import ipaddress as _ip
 
-    ips = []
     try:
         net = _ip.ip_network(target, strict=False)
         if net.num_addresses <= 512:
@@ -179,6 +200,7 @@ async def _collect_ips(target: str) -> list[str]:
 
 async def _get_cache_ips() -> list[str]:
     from netscanx.scanner.layer2 import get_arp_cache
+
     cache = await get_arp_cache()
     return [h.ip for h in cache]
 
@@ -186,6 +208,7 @@ async def _get_cache_ips() -> list[str]:
 def _local_net() -> str:
     try:
         import ipaddress
+
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.connect(("8.8.8.8", 80))
             local_ip = s.getsockname()[0]

@@ -58,8 +58,11 @@ def test_classify_device_type_router_by_ssdp_type():
     host = Host(ip="10.0.0.1")
     services = [
         ServiceInfo(
-            name="gateway", type="urn:schemas-upnp-org:device:InternetGatewayDevice:1",
-            host="10.0.0.1", ip="10.0.0.1", source="ssdp",
+            name="gateway",
+            type="urn:schemas-upnp-org:device:InternetGatewayDevice:1",
+            host="10.0.0.1",
+            ip="10.0.0.1",
+            source="ssdp",
         )
     ]
     assert classify_device_type(host, services) == "router"

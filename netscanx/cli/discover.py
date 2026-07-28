@@ -1,4 +1,5 @@
 """netscanx discover: host discovery via ARP, ICMP, TCP."""
+
 from __future__ import annotations
 
 import asyncio
@@ -14,7 +15,7 @@ from netscanx.output import emit_json, emit_yaml, print_discover
 from netscanx.scanner.hostname import resolve_hostnames_batch
 from netscanx.scanner.layer2 import ARPScanner, get_arp_cache
 from netscanx.scanner.layer3 import ICMPScanner
-from netscanx.scanner.layer4 import TCPScanner, SYNScanner, parse_port_spec
+from netscanx.scanner.layer4 import SYNScanner, TCPScanner, parse_port_spec
 from netscanx.scanner.privileges import is_root
 from netscanx.scanner.vendor import lookup_vendor
 
@@ -35,25 +36,52 @@ def _auto_detect_network() -> str:
 @click.argument("target", required=False)
 @click.option("--arp/--no-arp", default=True, help="ARP sweep (requires root/admin)")
 @click.option("--ping/--no-ping", default=True, help="ICMP ping sweep")
-@click.option("--ports", "-p", default=None, metavar="PORTS",
-              help="Port range to scan, e.g. 22,80,443 or 1-1024")
+@click.option(
+    "--ports",
+    "-p",
+    default=None,
+    metavar="PORTS",
+    help="Port range to scan, e.g. 22,80,443 or 1-1024",
+)
 @click.option("--syn/--no-syn", default=False, help="TCP SYN scan (requires root/admin)")
 @click.option("--banner/--no-banner", default=False, help="Grab service banners")
-@click.option("--vendor/--no-vendor", default=False,
-              help="Lookup MAC vendors (uses online API, rate-limited)")
-@click.option("--hostname/--no-hostname", default=True,
-              help="Resolve hostnames via reverse DNS")
-@click.option("--timeout", "-t", default=2.0, type=float, metavar="SEC",
-              help="Probe timeout in seconds [default: 2.0]")
-@click.option("--concurrency", "-c", default=200, type=int, metavar="N",
-              help="Concurrent probes [default: 200]")
-@click.option("--format", "fmt", default="table",
-              type=click.Choice(["table", "json", "yaml"]), help="Output format")
+@click.option(
+    "--vendor/--no-vendor", default=False, help="Lookup MAC vendors (uses online API, rate-limited)"
+)
+@click.option("--hostname/--no-hostname", default=True, help="Resolve hostnames via reverse DNS")
+@click.option(
+    "--timeout",
+    "-t",
+    default=2.0,
+    type=float,
+    metavar="SEC",
+    help="Probe timeout in seconds [default: 2.0]",
+)
+@click.option(
+    "--concurrency",
+    "-c",
+    default=200,
+    type=int,
+    metavar="N",
+    help="Concurrent probes [default: 200]",
+)
+@click.option(
+    "--format",
+    "fmt",
+    default="table",
+    type=click.Choice(["table", "json", "yaml"]),
+    help="Output format",
+)
 @click.option("--cache/--no-cache", default=False, help="Include ARP cache entries")
 @click.option("-v", "--verbose", is_flag=True, help="Show port details and banners")
-@click.option("--persist/--no-persist", default=False,
-              help="Persist results to the local SQLite inventory for baseline/drift detection")
-@click.option("--db-path", default=None, help="Override the SQLite database path (implies --persist)")
+@click.option(
+    "--persist/--no-persist",
+    default=False,
+    help="Persist results to the local SQLite inventory for baseline/drift detection",
+)
+@click.option(
+    "--db-path", default=None, help="Override the SQLite database path (implies --persist)"
+)
 def discover(
     target: str | None,
     arp: bool,
@@ -85,23 +113,25 @@ def discover(
       netscanx discover 10.0.0.0/24 --arp --ports 22,80,443
       sudo netscanx discover --arp --syn --vendor --format json
     """
-    asyncio.run(_run(
-        target=target or _auto_detect_network(),
-        do_arp=arp,
-        do_ping=ping,
-        port_spec=ports,
-        do_syn=syn,
-        do_banner=banner,
-        do_vendor=vendor,
-        do_hostname=hostname,
-        timeout=timeout,
-        concurrency=concurrency,
-        fmt=fmt,
-        include_cache=cache,
-        verbose=verbose,
-        persist=persist or bool(db_path),
-        db_path=db_path,
-    ))
+    asyncio.run(
+        _run(
+            target=target or _auto_detect_network(),
+            do_arp=arp,
+            do_ping=ping,
+            port_spec=ports,
+            do_syn=syn,
+            do_banner=banner,
+            do_vendor=vendor,
+            do_hostname=hostname,
+            timeout=timeout,
+            concurrency=concurrency,
+            fmt=fmt,
+            include_cache=cache,
+            verbose=verbose,
+            persist=persist or bool(db_path),
+            db_path=db_path,
+        )
+    )
 
 
 async def _run(
@@ -217,10 +247,30 @@ async def run_discover_scan(
                 _merge(h)
 
     if port_spec or do_syn:
-        port_list = parse_port_spec(port_spec) if port_spec else [
-            21, 22, 23, 25, 53, 80, 110, 143, 443, 445, 993, 995,
-            3306, 3389, 5432, 5900, 8080, 8443,
-        ]
+        port_list = (
+            parse_port_spec(port_spec)
+            if port_spec
+            else [
+                21,
+                22,
+                23,
+                25,
+                53,
+                80,
+                110,
+                143,
+                443,
+                445,
+                993,
+                995,
+                3306,
+                3389,
+                5432,
+                5900,
+                8080,
+                8443,
+            ]
+        )
         scan_ips = list(hosts_by_ip.keys()) or ([target] if is_single else [])
 
         if do_syn and is_root():

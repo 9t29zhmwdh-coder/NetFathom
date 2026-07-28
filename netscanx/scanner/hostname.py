@@ -1,4 +1,5 @@
 """Reverse DNS hostname resolution for discovered hosts."""
+
 from __future__ import annotations
 
 import asyncio

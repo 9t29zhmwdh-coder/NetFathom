@@ -1,4 +1,5 @@
 """netscanx dashboard: optional web dashboard."""
+
 from __future__ import annotations
 
 import asyncio
@@ -10,12 +11,9 @@ console = Console(stderr=True)
 
 
 @click.command()
-@click.option("--host", default="0.0.0.0", metavar="HOST",
-              help="Bind host [default: 0.0.0.0]")
-@click.option("--port", default=8080, type=int, metavar="PORT",
-              help="Bind port [default: 8080]")
-@click.option("--open-browser/--no-open-browser", default=True,
-              help="Open browser automatically")
+@click.option("--host", default="0.0.0.0", metavar="HOST", help="Bind host [default: 0.0.0.0]")
+@click.option("--port", default=8080, type=int, metavar="PORT", help="Bind port [default: 8080]")
+@click.option("--open-browser/--no-open-browser", default=True, help="Open browser automatically")
 def dashboard(host: str, port: int, open_browser: bool) -> None:
     """Launch the optional web dashboard for scan results.
 
@@ -29,6 +27,7 @@ def dashboard(host: str, port: int, open_browser: bool) -> None:
 
 async def _run(host: str, port: int, open_browser: bool) -> None:
     import uvicorn
+
     from netscanx.dashboard.server import app
 
     url = f"http://{'localhost' if host == '0.0.0.0' else host}:{port}"
@@ -36,6 +35,7 @@ async def _run(host: str, port: int, open_browser: bool) -> None:
 
     if open_browser:
         import webbrowser
+
         await asyncio.sleep(0.5)
         webbrowser.open(url)
 

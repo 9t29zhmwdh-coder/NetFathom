@@ -11,10 +11,10 @@ Usage:
 
 Requires: no extra dependencies (stdlib only)
 """
+
 import argparse
 import asyncio
 import sys
-
 
 BANNERS: dict[int, bytes] = {
     22: b"SSH-2.0-OpenSSH_9.0p1 NetScanX-Sim\r\n",
@@ -74,7 +74,7 @@ async def main(host: str, ports: list[int], duration: float) -> None:
         print("No ports could be bound.", file=sys.stderr)
         return
 
-    print(f"\nAll servers running. Test with:")
+    print("\nAll servers running. Test with:")
     print(f"  netscanx discover {host} --ping --ports {','.join(str(p) for p in ports)}")
     print()
 
@@ -105,11 +105,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="NetScanX probe simulator")
     parser.add_argument("--host", default="127.0.0.1", help="Bind host [default: 127.0.0.1]")
     parser.add_argument(
-        "--ports", default="22,21,25,80,443,8080,3306,5432",
-        help="Ports to simulate [default: 22,21,25,80,443,8080,3306,5432]"
+        "--ports",
+        default="22,21,25,80,443,8080,3306,5432",
+        help="Ports to simulate [default: 22,21,25,80,443,8080,3306,5432]",
     )
-    parser.add_argument("--duration", type=float, default=300.0,
-                        help="How long to run in seconds [default: 300]")
+    parser.add_argument(
+        "--duration", type=float, default=300.0, help="How long to run in seconds [default: 300]"
+    )
     args = parser.parse_args()
 
     try:
