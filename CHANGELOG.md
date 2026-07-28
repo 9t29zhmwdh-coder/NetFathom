@@ -5,6 +5,16 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-07-28
+
+### Added
+
+- `.github/dependabot.yml`, covering GitHub Actions and pip with grouped weekly updates. The file was missing, and without it there are no version updates at all: security alerts only fire for disclosed vulnerabilities. The `actions/checkout` pin here had been sitting on v7.0.0 while v7.0.1 was current. Follows `engineering-standards` v0.10.0.
+
+### Changed
+
+- `ruff` is pinned to 0.16.0 instead of `>=0.5.0`. An open range lets a new release change what counts as correct on unchanged source and turn CI red without a commit, which happened to `AdapterForge` earlier today.
+
 ## [1.0.1] - 2026-07-20
 
 ### Changed
