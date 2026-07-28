@@ -1,4 +1,5 @@
 """netscanx baseline: pin the current scan as the drift-detection baseline."""
+
 from __future__ import annotations
 
 import asyncio

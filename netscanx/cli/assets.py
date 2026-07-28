@@ -1,4 +1,5 @@
 """netscanx assets: list the persisted device inventory."""
+
 from __future__ import annotations
 
 import asyncio
@@ -49,7 +50,9 @@ async def _run(fmt: str, db_path: str | None) -> None:
         return
     else:
         if not rows:
-            console.print("[yellow]No devices in inventory yet -- run `netscanx baseline` or `netscanx discover --persist` first.[/yellow]")
+            console.print(
+                "[yellow]No devices in inventory yet -- run `netscanx baseline` or `netscanx discover --persist` first.[/yellow]"
+            )
             return
         table = Table(title=f"NetScanX Asset Inventory ({len(rows)} devices)", box=box.ROUNDED)
         table.add_column("IP", style="cyan")

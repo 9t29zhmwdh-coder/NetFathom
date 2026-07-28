@@ -1,8 +1,8 @@
 """SNMP v1/v2c system information scanner."""
+
 from __future__ import annotations
 
 import asyncio
-import struct
 
 from netscanx.models import ServiceInfo
 
@@ -60,9 +60,7 @@ class SNMPScanner:
             sock = _socket.socket(_socket.AF_INET, _socket.SOCK_DGRAM)
             sock.setblocking(False)
             try:
-                await asyncio.wait_for(
-                    loop.sock_sendto(sock, pkt, (ip, 161)), timeout=self.timeout
-                )
+                await asyncio.wait_for(loop.sock_sendto(sock, pkt, (ip, 161)), timeout=self.timeout)
                 data, _ = await asyncio.wait_for(
                     loop.sock_recvfrom(sock, 4096), timeout=self.timeout
                 )

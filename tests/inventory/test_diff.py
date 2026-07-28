@@ -36,9 +36,7 @@ def test_ip_changed():
 
 
 def test_mac_changed_when_new_mac_present():
-    changes = diff_snapshots(
-        _fields(mac="AA:BB:CC:DD:EE:FF"), _fields(mac="11:22:33:44:55:66")
-    )
+    changes = diff_snapshots(_fields(mac="AA:BB:CC:DD:EE:FF"), _fields(mac="11:22:33:44:55:66"))
     assert ChangeRecord("mac_changed", "mac", "AA:BB:CC:DD:EE:FF", "11:22:33:44:55:66") in changes
 
 
@@ -79,7 +77,10 @@ def test_firmware_changed_via_sysdescr():
     old = _fields(snmp_sysdescr="Firmware v1.0")
     new = _fields(snmp_sysdescr="Firmware v1.1")
     changes = diff_snapshots(old, new)
-    assert ChangeRecord("firmware_changed", "snmp_sysdescr", "Firmware v1.0", "Firmware v1.1") in changes
+    assert (
+        ChangeRecord("firmware_changed", "snmp_sysdescr", "Firmware v1.0", "Firmware v1.1")
+        in changes
+    )
 
 
 def test_firmware_diff_ignored_when_both_none():

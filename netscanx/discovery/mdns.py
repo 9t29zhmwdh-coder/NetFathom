@@ -1,4 +1,5 @@
 """mDNS/Zeroconf service discovery."""
+
 from __future__ import annotations
 
 import asyncio
@@ -43,7 +44,6 @@ class MDNSDiscovery:
 
         try:
             aiozc = AsyncZeroconf()
-            found_events: dict[str, asyncio.Event] = {}
 
             class Listener:
                 def add_service(self, zc: Zeroconf, type_: str, name: str) -> None:
@@ -75,10 +75,7 @@ class MDNSDiscovery:
                     pass
 
             listener = Listener()
-            browsers = [
-                ServiceBrowser(aiozc.zeroconf, stype, listener)
-                for stype in types
-            ]
+            browsers = [ServiceBrowser(aiozc.zeroconf, stype, listener) for stype in types]
 
             await asyncio.sleep(self.timeout)
 

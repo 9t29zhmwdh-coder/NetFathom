@@ -1,4 +1,5 @@
 """Auto-diagnostics: DNS, DHCP, routing, packet loss, latency, subnet config."""
+
 from __future__ import annotations
 
 import asyncio
@@ -35,11 +36,13 @@ class DiagnosticsRunner:
             if isinstance(r, DiagnosticCheck):
                 report.add(r)
             elif isinstance(r, Exception):
-                report.add(DiagnosticCheck(
-                    name="internal",
-                    status="error",
-                    message=str(r),
-                ))
+                report.add(
+                    DiagnosticCheck(
+                        name="internal",
+                        status="error",
+                        message=str(r),
+                    )
+                )
         return report
 
     async def _check_dns(self) -> DiagnosticCheck:
@@ -205,7 +208,7 @@ class DiagnosticsRunner:
 
         try:
             leases = await parse_dhcp_leases()
-            servers = {l.get("dhcp_server") for l in leases if l.get("dhcp_server")}
+            servers = {lease.get("dhcp_server") for lease in leases if lease.get("dhcp_server")}
 
             if len(servers) > 1:
                 return DiagnosticCheck(
@@ -257,19 +260,18 @@ def _get_default_gateway() -> str | None:
     system = platform.system()
     try:
         if system == "Windows":
-            result = subprocess.run(
-                ["route", "print", "0.0.0.0"],
-                capture_output=True, text=True
-            )
+            result = subprocess.run(["route", "print", "0.0.0.0"], capture_output=True, text=True)
             for line in result.stdout.splitlines():
                 parts = line.split()
                 if parts and parts[0] == "0.0.0.0" and len(parts) >= 3:
                     return parts[2]
         else:
             result = subprocess.run(
-                ["ip", "route", "show", "default"] if system == "Linux"
+                ["ip", "route", "show", "default"]
+                if system == "Linux"
                 else ["route", "-n", "get", "default"],
-                capture_output=True, text=True
+                capture_output=True,
+                text=True,
             )
             for line in result.stdout.splitlines():
                 if "default" in line or "gateway" in line.lower():

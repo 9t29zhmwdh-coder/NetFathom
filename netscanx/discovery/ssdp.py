@@ -1,11 +1,9 @@
 """SSDP/UPnP device discovery via UDP multicast."""
+
 from __future__ import annotations
 
 import asyncio
 import socket
-from typing import AsyncIterator
-
-import aiohttp
 
 from netscanx.models import ServiceInfo
 
@@ -88,6 +86,7 @@ async def _to_service(headers: dict, ip: str) -> ServiceInfo | None:
     if location:
         try:
             from urllib.parse import urlparse
+
             parsed = urlparse(location)
             port = parsed.port or (443 if parsed.scheme == "https" else 80)
         except Exception:

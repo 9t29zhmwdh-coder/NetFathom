@@ -150,9 +150,7 @@ class InventoryService:
             await session.commit()
             return run, [change for _, change in change_records]
 
-    async def _resolve_device(
-        self, repo: InventoryRepository, host: Host, now: datetime
-    ) -> Device:
+    async def _resolve_device(self, repo: InventoryRepository, host: Host, now: datetime) -> Device:
         """Layered device-identity resolution: primary key is a
         non-randomized MAC; fallback is IP+hostname within a grace window.
         A MAC change on a previously-known IP is treated as a change EVENT

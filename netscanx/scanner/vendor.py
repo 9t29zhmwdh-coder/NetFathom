@@ -23,9 +23,7 @@ async def lookup_vendor(mac: str) -> str | None:
 
         oui = norm.replace(":", "")[:6]
         url = f"https://api.macvendors.com/{oui}"
-        async with aiohttp.ClientSession(
-            timeout=aiohttp.ClientTimeout(total=2)
-        ) as session:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=2)) as session:
             async with session.get(url) as resp:
                 if resp.status == 200:
                     vendor = (await resp.text()).strip()
@@ -36,9 +34,7 @@ async def lookup_vendor(mac: str) -> str | None:
     return None
 
 
-async def lookup_vendors_batch(
-    macs: list[str], rate_delay: float = 1.1
-) -> dict[str, str | None]:
+async def lookup_vendors_batch(macs: list[str], rate_delay: float = 1.1) -> dict[str, str | None]:
     results: dict[str, str | None] = {}
     for mac in macs:
         results[mac] = await lookup_vendor(mac)

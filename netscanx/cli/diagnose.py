@@ -1,4 +1,5 @@
 """netscanx diagnose: auto-diagnose network health."""
+
 from __future__ import annotations
 
 import asyncio
@@ -13,8 +14,13 @@ console = Console(stderr=True)
 
 @click.command()
 @click.argument("target", required=False, default="local")
-@click.option("--format", "fmt", default="table",
-              type=click.Choice(["table", "json", "yaml"]), help="Output format")
+@click.option(
+    "--format",
+    "fmt",
+    default="table",
+    type=click.Choice(["table", "json", "yaml"]),
+    help="Output format",
+)
 def diagnose(target: str, fmt: str) -> None:
     """Auto-diagnose network health: DNS, routing, DHCP, packet loss.
 
