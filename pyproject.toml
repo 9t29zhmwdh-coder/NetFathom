@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "netscanx"
-version = "1.0.1"
+version = "1.0.2"
 description = "Cross-platform network discovery and diagnostic toolkit"
 requires-python = ">=3.11"
 license = {text = "MIT"}
@@ -31,7 +31,9 @@ dev = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
     "pytest-cov>=5.0.0",
-    "ruff>=0.5.0",
+    # Pinned exactly: an open range lets a new ruff change what counts as
+    # correct on unchanged source and turn CI red without a commit.
+    "ruff==0.16.0",
 ]
 windows = [
     "wmi>=1.5.1; sys_platform == 'win32'",
