@@ -14,14 +14,14 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            spec: build/netscanx-windows.spec
-            artifact: NetScanX-Start-Windows.exe
+            spec: build/netfathom-windows.spec
+            artifact: NetFathom-Start-Windows.exe
           - os: macos-latest
-            spec: build/netscanx-macos.spec
-            artifact: NetScanX-Start-macOS
+            spec: build/netfathom-macos.spec
+            artifact: NetFathom-Start-macOS
           - os: ubuntu-latest
-            spec: build/netscanx-linux.spec
-            artifact: NetScanX-Start-Linux
+            spec: build/netfathom-linux.spec
+            artifact: NetFathom-Start-Linux
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -51,7 +51,7 @@ jobs:
           mkdir -p dmg-root
           cp "dist/${{ matrix.artifact }}" dmg-root/
           chmod +x "dmg-root/${{ matrix.artifact }}"
-          hdiutil create -volname "NetScanX" -srcfolder dmg-root -ov -format UDZO "dist/NetScanX-Start-macOS.dmg"
+          hdiutil create -volname "NetFathom" -srcfolder dmg-root -ov -format UDZO "dist/NetFathom-Start-macOS.dmg"
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
         with:
@@ -62,8 +62,8 @@ jobs:
         if: matrix.os == 'macos-latest'
         uses: actions/upload-artifact@v7
         with:
-          name: NetScanX-Start-macOS.dmg
-          path: dist/NetScanX-Start-macOS.dmg
+          name: NetFathom-Start-macOS.dmg
+          path: dist/NetFathom-Start-macOS.dmg
           if-no-files-found: error
 
   release:
@@ -90,5 +90,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${{ github.ref_name }}" release/* \
-            --title "NetScanX ${{ github.ref_name }}" \
+            --title "NetFathom ${{ github.ref_name }}" \
             --generate-notes

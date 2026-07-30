@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from netscanx.storage import paths
+from netfathom.storage import paths
 
 
 def test_is_frozen_false_by_default():
@@ -24,7 +24,7 @@ def test_is_frozen_false_when_only_frozen_set(monkeypatch):
 
 
 def test_get_executable_dir_uses_sys_executable(monkeypatch, tmp_path):
-    fake_exe = tmp_path / "NetScanX-Start-Windows.exe"
+    fake_exe = tmp_path / "NetFathom-Start-Windows.exe"
     fake_exe.parent.mkdir(parents=True, exist_ok=True)
     monkeypatch.setattr(sys, "executable", str(fake_exe))
     assert paths.get_executable_dir() == tmp_path.resolve()
@@ -38,28 +38,28 @@ def test_resolve_db_path_explicit_override(tmp_path):
 
 
 def test_resolve_db_path_env_var(monkeypatch, tmp_path):
-    env_path = tmp_path / "envdir" / "netscanx.db"
-    monkeypatch.setenv("NETSCANX_DB_PATH", str(env_path))
+    env_path = tmp_path / "envdir" / "netfathom.db"
+    monkeypatch.setenv("NETFATHOM_DB_PATH", str(env_path))
     resolved = paths.resolve_db_path()
     assert resolved == env_path.resolve()
     assert env_path.parent.is_dir()
 
 
 def test_resolve_db_path_portable_mode(monkeypatch, tmp_path):
-    fake_exe = tmp_path / "NetScanX-Start-Linux"
-    monkeypatch.delenv("NETSCANX_DB_PATH", raising=False)
+    fake_exe = tmp_path / "NetFathom-Start-Linux"
+    monkeypatch.delenv("NETFATHOM_DB_PATH", raising=False)
     monkeypatch.setattr(sys, "frozen", True, raising=False)
     monkeypatch.setattr(sys, "_MEIPASS", "/tmp/fake", raising=False)
     monkeypatch.setattr(sys, "executable", str(fake_exe))
 
     resolved = paths.resolve_db_path()
 
-    assert resolved == tmp_path / "NetScanX-Data" / "netscanx.db"
+    assert resolved == tmp_path / "NetFathom-Data" / "netfathom.db"
     assert resolved.parent.is_dir()
 
 
 def test_resolve_db_path_installed_mode_uses_platformdirs(monkeypatch, tmp_path):
-    monkeypatch.delenv("NETSCANX_DB_PATH", raising=False)
+    monkeypatch.delenv("NETFATHOM_DB_PATH", raising=False)
     monkeypatch.setattr(sys, "frozen", False, raising=False)
     monkeypatch.delattr(sys, "_MEIPASS", raising=False)
     monkeypatch.setattr(
@@ -68,7 +68,7 @@ def test_resolve_db_path_installed_mode_uses_platformdirs(monkeypatch, tmp_path)
 
     resolved = paths.resolve_db_path()
 
-    assert resolved == tmp_path / "appdata" / "netscanx.db"
+    assert resolved == tmp_path / "appdata" / "netfathom.db"
 
 
 @pytest.fixture(autouse=True)

@@ -1,5 +1,5 @@
-# Copilot Instructions for NetScanX
-NetScanX is a cross-platform network discovery and diagnostic toolkit; it discovers hosts, enumerates services, measures throughput, and auto-diagnoses network issues from a single CLI.
+# Copilot Instructions for NetFathom
+NetFathom is a cross-platform network discovery and diagnostic toolkit; it discovers hosts, enumerates services, measures throughput, and auto-diagnoses network issues from a single CLI.
 ## Code style
 - Functions stay small and single-purpose, prefer under 20 lines
 - Naming: verb+noun for functions, clear intent for variables, no x/temp/data

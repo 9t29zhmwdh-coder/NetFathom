@@ -1,0 +1,267 @@
+"""FastAPI dashboard server for NetFathom."""
+
+from __future__ import annotations
+
+import asyncio
+import ipaddress
+import json
+import re
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, field_validator
+
+from netfathom.cli.discover import _auto_detect_network, run_discover_scan
+from netfathom.cli.services import run_services_scan
+from netfathom.diagnostics.checks import DiagnosticsRunner
+from netfathom.inventory.service import InventoryService
+from netfathom.scanner.layer3 import ping_stats
+
+app = FastAPI(title="NetFathom Dashboard", version="0.3.0")
+
+_inventory = InventoryService()
+
+_HOSTNAME_RE = re.compile(r"^[A-Za-z0-9]([A-Za-z0-9-]{0,62}\.?)+$")
+
+
+class SpeedtestRequest(BaseModel):
+    host: str
+    count: int = 15
+
+    @field_validator("host")
+    @classmethod
+    def validate_host(cls, v: str) -> str:
+        v = v.strip()
+        try:
+            ipaddress.ip_address(v)
+            return v
+        except ValueError:
+            pass
+        if len(v) <= 253 and _HOSTNAME_RE.match(v):
+            return v
+        raise ValueError("invalid host, must be an IP address or hostname")
+
+    @field_validator("count")
+    @classmethod
+    def validate_count(cls, v: int) -> int:
+        return max(1, min(v, 50))
+
+
+_STATIC = Path(__file__).parent / "static"
+
+
+class BroadcastRegistry:
+    def __init__(self):
+        self._clients: set[WebSocket] = set()
+
+    async def connect(self, ws: WebSocket) -> None:
+        await ws.accept()
+        self._clients.add(ws)
+
+    def disconnect(self, ws: WebSocket) -> None:
+        self._clients.discard(ws)
+
+    async def broadcast(self, data: dict) -> None:
+        dead = set()
+        for ws in self._clients:
+            try:
+                await ws.send_json(data)
+            except Exception:
+                dead.add(ws)
+        self._clients -= dead
+
+
+_registry = BroadcastRegistry()
+_scan_cache: dict[str, Any] = {}
+
+
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    index = _STATIC / "index.html"
+    return HTMLResponse(content=index.read_text(encoding="utf-8"))
+
+
+@app.get("/api/hosts")
+async def api_hosts():
+    return _scan_cache.get("hosts", [])
+
+
+@app.get("/api/services")
+async def api_services():
+    return _scan_cache.get("services", [])
+
+
+@app.get("/api/diagnostics")
+async def api_diagnostics():
+    return _scan_cache.get("diagnostics", {})
+
+
+@app.get("/api/speedtest")
+async def api_speedtest_last():
+    return _scan_cache.get("speedtest", {})
+
+
+@app.post("/api/speedtest")
+async def api_speedtest_run(req: SpeedtestRequest):
+    try:
+        stats = await ping_stats(req.host, count=req.count, interval=0.1)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"speedtest failed: {e}")
+
+    data = json.loads(stats.model_dump_json())
+    _scan_cache["speedtest"] = data
+    await _registry.broadcast({"type": "speedtest", "data": data, "ts": _ts()})
+    return data
+
+
+@app.get("/api/scan")
+async def api_trigger_scan():
+    asyncio.create_task(_background_scan())
+    return {"status": "scan_started"}
+
+
+@app.get("/api/assets")
+async def api_assets():
+    devices = await _inventory.list_assets()
+    return [
+        {
+            "id": d.id,
+            "ip": d.last_ip,
+            "hostname": d.last_hostname,
+            "mac": d.primary_mac,
+            "vendor": d.last_vendor,
+            "os_guess": d.last_os_guess,
+            "device_type": d.last_device_type,
+            "first_seen": d.first_seen.isoformat() if d.first_seen else None,
+            "last_seen": d.last_seen.isoformat() if d.last_seen else None,
+        }
+        for d in devices
+    ]
+
+
+@app.get("/api/changes")
+async def api_changes(since_baseline: bool = False):
+    change_events = await _inventory.get_changes(since_baseline=since_baseline)
+    devices = {d.id: d for d in await _inventory.list_assets()}
+    return [_change_to_dict(c, devices) for c in change_events]
+
+
+@app.post("/api/baseline")
+async def api_pin_baseline():
+    try:
+        run = await _inventory.pin_baseline()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return {"run_id": run.id, "target": run.target, "host_count": run.host_count}
+
+
+def _change_to_dict(change, devices: dict) -> dict:
+    device = devices.get(change.device_id)
+    return {
+        "device_id": change.device_id,
+        "device_ip": device.last_ip if device else None,
+        "device_hostname": device.last_hostname if device else None,
+        "change_type": change.change_type,
+        "field": change.field,
+        "old_value": change.old_value,
+        "new_value": change.new_value,
+        "detected_at": change.detected_at.isoformat() if change.detected_at else None,
+    }
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(ws: WebSocket):
+    await _registry.connect(ws)
+    try:
+        await ws.send_json({"type": "connected", "ts": _ts()})
+        if _scan_cache:
+            await ws.send_json({"type": "cache", "data": _scan_cache, "ts": _ts()})
+        while True:
+            await asyncio.sleep(30)
+            await ws.send_json({"type": "ping", "ts": _ts()})
+    except WebSocketDisconnect:
+        _registry.disconnect(ws)
+    except Exception:
+        _registry.disconnect(ws)
+
+
+@app.on_event("startup")
+async def startup():
+    asyncio.create_task(_background_scan())
+
+
+async def _background_scan():
+    await _registry.broadcast({"type": "scan_start", "ts": _ts()})
+    target = _auto_detect_network()
+
+    discover_result = None
+    services_result = None
+
+    try:
+        discover_result = await run_discover_scan(
+            target=target,
+            do_arp=True,
+            do_ping=True,
+            do_vendor=True,
+            do_hostname=True,
+            timeout=1.5,
+            include_cache=True,
+        )
+        hosts_data = json.loads(discover_result.model_dump_json())["hosts"]
+        _scan_cache["hosts"] = hosts_data
+        await _registry.broadcast({"type": "hosts", "data": hosts_data, "ts": _ts()})
+    except Exception:
+        pass
+
+    try:
+        services_result = await run_services_scan(
+            target=target,
+            do_mdns=True,
+            do_ssdp=True,
+            do_netbios=False,
+            do_snmp=False,
+            mdns_timeout=4.0,
+            ssdp_timeout=3.0,
+        )
+        services_data = json.loads(services_result.model_dump_json())["services"]
+        _scan_cache["services"] = services_data
+        await _registry.broadcast({"type": "services", "data": services_data, "ts": _ts()})
+    except Exception:
+        pass
+
+    try:
+        runner = DiagnosticsRunner()
+        report = await runner.run_all()
+        diag_data = json.loads(report.model_dump_json())
+        _scan_cache["diagnostics"] = diag_data
+        await _registry.broadcast({"type": "diagnostics", "data": diag_data, "ts": _ts()})
+    except Exception:
+        pass
+
+    if discover_result is not None:
+        try:
+            _run, change_records = await _inventory.persist_results(
+                discover_result, services_result
+            )
+            if change_records:
+                devices = {d.id: d for d in await _inventory.list_assets()}
+                changes = await _inventory.get_changes()
+                changes_data = [_change_to_dict(c, devices) for c in changes]
+                await _registry.broadcast(
+                    {"type": "change_detected", "data": changes_data, "ts": _ts()}
+                )
+        except Exception:
+            pass
+
+    await _registry.broadcast({"type": "scan_done", "ts": _ts()})
+
+
+def _ts() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+app.mount("/", StaticFiles(directory=str(_STATIC), html=True), name="static")

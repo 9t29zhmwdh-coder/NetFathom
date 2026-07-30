@@ -20,5 +20,5 @@ Thumbs.db
 htmlcov/
 .ruff_cache/
 *.sqlite3
-netscanx.db
-NetScanX-Data/
+netfathom.db
+NetFathom-Data/

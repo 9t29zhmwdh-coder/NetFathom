@@ -25,4 +25,4 @@ jobs:
       - name: Format check (ruff)
         run: ruff format --check .
       - name: Test (pytest)
-        run: pytest -v --cov=netscanx --cov-report=term-missing
+        run: pytest -v --cov=netfathom --cov-report=term-missing

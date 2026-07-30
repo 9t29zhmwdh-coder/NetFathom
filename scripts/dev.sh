@@ -8,9 +8,9 @@ if [ ! -d ".venv" ]; then
   .venv/bin/pip install -e ".[dev]"
 fi
 
-echo "NetScanX venv ready."
+echo "NetFathom venv ready."
 echo "Activate: source .venv/bin/activate"
-echo "Run:      netscanx --help"
+echo "Run:      netfathom --help"
 echo ""
 echo "Note: ARP sweep and SYN scan require root:"
-echo "  sudo .venv/bin/netscanx discover --arp"
+echo "  sudo .venv/bin/netfathom discover --arp"

@@ -2,10 +2,10 @@
 
 ## Overview
 
-NetScanX is a modular Python CLI toolkit for network discovery and diagnostics.
+NetFathom is a modular Python CLI toolkit for network discovery and diagnostics.
 
 ```
-netscanx/
+netfathom/
 ├── cli/                 # Click commands: discover, services, speedtest, diagnose,
 │                          dashboard, baseline, changes, assets, health
 ├── scanner/

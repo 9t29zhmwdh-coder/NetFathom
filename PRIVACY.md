@@ -1,6 +1,6 @@
 # Privacy Policy
 
-NetScanX is a local network diagnostic tool. All scan results remain exclusively
+NetFathom is a local network diagnostic tool. All scan results remain exclusively
 on your machine. No network topology data, IP addresses, hostname maps, or scan
 results are transmitted to external servers or third parties.
 

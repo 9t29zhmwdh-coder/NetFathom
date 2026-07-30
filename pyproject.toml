@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "netscanx"
-version = "1.0.6"
+name = "netfathom"
+version = "1.1.0"
 description = "Cross-platform network discovery and diagnostic toolkit"
 requires-python = ">=3.11"
 license = {text = "MIT"}
@@ -44,10 +44,10 @@ build = [
 ]
 
 [project.scripts]
-netscanx = "netscanx.cli.main:cli"
+netfathom = "netfathom.cli.main:cli"
 
 [tool.hatch.build.targets.wheel]
-packages = ["netscanx"]
+packages = ["netfathom"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
