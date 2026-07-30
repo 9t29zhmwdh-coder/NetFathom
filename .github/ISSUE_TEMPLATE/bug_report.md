@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a bug in NetScanX
+about: Report a bug in NetFathom
 labels: bug
 ---
 
@@ -17,7 +17,7 @@ What you expected to happen.
 - OS:
 - Python version (`python --version`):
 - Installed packages (`pip list`):
-- NetScanX version:
+- NetFathom version:
 
 ## Additional context
 Logs, screenshots, etc.

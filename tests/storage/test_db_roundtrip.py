@@ -5,8 +5,8 @@ from datetime import datetime, timezone
 import pytest
 from sqlalchemy import select
 
-from netscanx.storage.db import get_engine, get_session, init_db
-from netscanx.storage.schema import ChangeEvent, Device, DeviceSnapshot, ScanRun
+from netfathom.storage.db import get_engine, get_session, init_db
+from netfathom.storage.schema import ChangeEvent, Device, DeviceSnapshot, ScanRun
 
 
 def _now():

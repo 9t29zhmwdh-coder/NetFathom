@@ -4,7 +4,7 @@
 
 **Do NOT open a public GitHub issue for security vulnerabilities.**
 
-Instead, report it via [GitHub Security Advisory](https://github.com/9t29zhmwdh-coder/NetScanX/security/advisories/new) or contact the maintainer via the GitHub profile.
+Instead, report it via [GitHub Security Advisory](https://github.com/9t29zhmwdh-coder/NetFathom/security/advisories/new) or contact the maintainer via the GitHub profile.
 
 Include:
 - Description of the vulnerability

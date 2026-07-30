@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from netscanx.inventory.identity import classify_device_type, guess_os_family, is_mac_randomized
-from netscanx.models import Host, Port, ServiceInfo
+from netfathom.inventory.identity import classify_device_type, guess_os_family, is_mac_randomized
+from netfathom.models import Host, Port, ServiceInfo
 
 
 def test_is_mac_randomized_true_for_locally_administered():

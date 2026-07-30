@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from netscanx.health.models import HealthCheck, HealthReport
+from netfathom.health.models import HealthCheck, HealthReport
 
 
 def test_all_ok_keeps_score_at_100():

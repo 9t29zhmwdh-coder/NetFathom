@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from netscanx.inventory.diff import ChangeRecord, SnapshotFields, diff_devices, diff_snapshots
+from netfathom.inventory.diff import ChangeRecord, SnapshotFields, diff_devices, diff_snapshots
 
 
 def _fields(**overrides) -> SnapshotFields:

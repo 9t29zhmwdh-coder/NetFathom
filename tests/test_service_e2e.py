@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from netscanx.inventory.service import InventoryService
-from netscanx.models import DiscoverResult, Host, Port
+from netfathom.inventory.service import InventoryService
+from netfathom.models import DiscoverResult, Host, Port
 
 
 async def test_first_scan_produces_new_device_events(tmp_path):

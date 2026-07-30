@@ -1,14 +1,14 @@
 <div align="center">
   <img src="RayStudio.png" alt="RayStudio Logo" width="120"/>
 
-  <h1>NetScanX</h1>
+  <h1>NetFathom</h1>
 </div>
 
 [🇬🇧 English Version](README.md)
 
-# NetScanX
+# NetFathom
 
-[![CI](https://github.com/9t29zhmwdh-coder/NetScanX/actions/workflows/ci.yml/badge.svg)](https://github.com/9t29zhmwdh-coder/NetScanX/actions) [![CodeQL](https://github.com/9t29zhmwdh-coder/NetScanX/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/9t29zhmwdh-coder/NetScanX/security/code-scanning) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/9t29zhmwdh-coder/NetScanX/badge)](https://securityscorecards.dev/viewer/?uri=github.com/9t29zhmwdh-coder/NetScanX) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13692/badge)](https://www.bestpractices.dev/projects/13692)
+[![CI](https://github.com/9t29zhmwdh-coder/NetFathom/actions/workflows/ci.yml/badge.svg)](https://github.com/9t29zhmwdh-coder/NetFathom/actions) [![CodeQL](https://github.com/9t29zhmwdh-coder/NetFathom/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/9t29zhmwdh-coder/NetFathom/security/code-scanning) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/9t29zhmwdh-coder/NetFathom/badge)](https://securityscorecards.dev/viewer/?uri=github.com/9t29zhmwdh-coder/NetFathom) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13692/badge)](https://www.bestpractices.dev/projects/13692)
 
 ![Platform](https://img.shields.io/badge/Platform-macOS_%7C_Windows_%7C_Ubuntu-lightgrey) ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![AI | Claude Code](https://img.shields.io/badge/AI-Claude_Code-black?logo=anthropic&logoColor=white) ![AI | Copilot](https://img.shields.io/badge/AI-Copilot-black?logo=github&logoColor=white)
 
@@ -16,10 +16,10 @@ Ein plattformübergreifendes Netzwerk-Discovery- und Diagnose-Toolkit; Hosts ent
 
 Läuft auf **macOS, Linux und Windows**. Kein Build-Schritt nötig, Installation via `pip` (siehe [Schnellstart](#schnellstart) für den plattformspezifischen Installationsweg).
 
-> **So läuft es:** Dies ist ein Kommandozeilen-Tool, keine Desktop-App und kein Server. Jeder Scan-Befehl läuft einmal durch und beendet sich, Ergebnisse werden in einer lokalen SQLite-Datenbank für Baseline-/Drift-Vergleiche gespeichert; es gibt keinen Installer und keinen Hintergrundprozess. Das optionale Web-Dashboard (`netscanx dashboard`) ist ein rein lokaler FastAPI-Server, den du selbst startest und stoppst, kein Dauerbetrieb.
+> **So läuft es:** Dies ist ein Kommandozeilen-Tool, keine Desktop-App und kein Server. Jeder Scan-Befehl läuft einmal durch und beendet sich, Ergebnisse werden in einer lokalen SQLite-Datenbank für Baseline-/Drift-Vergleiche gespeichert; es gibt keinen Installer und keinen Hintergrundprozess. Das optionale Web-Dashboard (`netfathom dashboard`) ist ein rein lokaler FastAPI-Server, den du selbst startest und stoppst, kein Dauerbetrieb.
 
 <p align="center">
-  <img src="docs/dashboard-screenshot.png" alt="NetScanX-Dashboard mit Change-Report- und Asset-Inventory-Karten" width="900"/>
+  <img src="docs/dashboard-screenshot.png" alt="NetFathom-Dashboard mit Change-Report- und Asset-Inventory-Karten" width="900"/>
 </p>
 
 <p align="center"><sub>Der Screenshot zeigt synthetische Demo-Daten, kein echtes Netzwerk.</sub></p>
@@ -30,7 +30,7 @@ Läuft auf **macOS, Linux und Windows**. Kein Build-Schritt nötig, Installation
 
 ---
 
-**In der Praxis:** du führst einmal einen Scan gegen dein Netzwerk aus, NetScanX entdeckt Hosts und Dienste und speichert das Ergebnis lokal; jeder weitere Scan wird mit dem letzten (oder einer festgelegten Baseline) verglichen, sodass du sofort siehst, was sich geändert hat, neue oder verschwundene Geräte, Port-Änderungen, Hostname-/IP-/MAC-Drift, ohne jedes Mal einen kompletten Bericht neu zu lesen.
+**In der Praxis:** du führst einmal einen Scan gegen dein Netzwerk aus, NetFathom entdeckt Hosts und Dienste und speichert das Ergebnis lokal; jeder weitere Scan wird mit dem letzten (oder einer festgelegten Baseline) verglichen, sodass du sofort siehst, was sich geändert hat, neue oder verschwundene Geräte, Port-Änderungen, Hostname-/IP-/MAC-Drift, ohne jedes Mal einen kompletten Bericht neu zu lesen.
 
 ---
 
@@ -69,19 +69,19 @@ Läuft auf **macOS, Linux und Windows**. Kein Build-Schritt nötig, Installation
 Die meisten aktuellen Installationen (Homebrew-Python, Debian/Ubuntu-System-Python, …) sind **externally managed** (PEP 668) und blockieren ein direktes `pip install`. Deshalb eine virtuelle Umgebung anlegen:
 
 ```bash
-python3 -m venv ~/netscanx-venv
-source ~/netscanx-venv/bin/activate
+python3 -m venv ~/netfathom-venv
+source ~/netfathom-venv/bin/activate
 
-pip install git+https://github.com/9t29zhmwdh-coder/NetScanX.git
+pip install git+https://github.com/9t29zhmwdh-coder/NetFathom.git
 ```
 
-In jeder neuen Shell-Sitzung muss `source ~/netscanx-venv/bin/activate` erneut ausgeführt werden, bevor `netscanx` funktioniert.
+In jeder neuen Shell-Sitzung muss `source ~/netfathom-venv/bin/activate` erneut ausgeführt werden, bevor `netfathom` funktioniert.
 
 <details>
 <summary>Ohne venv (nicht empfohlen)</summary>
 
 ```bash
-pip install --break-system-packages git+https://github.com/9t29zhmwdh-coder/NetScanX.git
+pip install --break-system-packages git+https://github.com/9t29zhmwdh-coder/NetFathom.git
 ```
 
 Das installiert direkt ins System-Python und kann mit Paketen kollidieren, die vom Betriebssystem verwaltet werden.
@@ -92,7 +92,7 @@ Das installiert direkt ins System-Python und kann mit Paketen kollidieren, die v
 Erfordert Python 3.11+ von [python.org](https://www.python.org/downloads/windows/) (beim Installer **"Add python.exe to PATH"** ankreuzen) oder aus dem Microsoft Store.
 
 ```powershell
-py -m pip install git+https://github.com/9t29zhmwdh-coder/NetScanX.git
+py -m pip install git+https://github.com/9t29zhmwdh-coder/NetFathom.git
 ```
 
 Der `py`-Launcher (Teil des offiziellen Windows-Installers) steht zuverlässiger im `PATH` als ein blosses `pip`/`python`, was die häufigste Ursache für `pip : Die Benennung "pip" wurde nicht als Name eines Cmdlet ... erkannt` ist. Findet sich auch `py` nicht, ist Python entweder nicht installiert oder wurde nicht zum `PATH` hinzugefügt; Installer erneut ausführen und "Ändern" → "Add to PATH" wählen, oder komplett neu von python.org installieren mit gesetzter Checkbox.
@@ -102,39 +102,39 @@ Gar kein Python installieren wollen? Den [portablen USB-Launcher](#portable--usb
 ### Lokale Entwicklung (alle Plattformen)
 
 ```bash
-git clone https://github.com/9t29zhmwdh-coder/NetScanX
-cd NetScanX
+git clone https://github.com/9t29zhmwdh-coder/NetFathom
+cd NetFathom
 bash scripts/dev.sh             # Windows: .\scripts\dev.ps1
 ```
 
-Legt automatisch eine `.venv` an und installiert NetScanX darin editable (siehe [Lokale Entwicklung](#lokale-entwicklung)).
+Legt automatisch eine `.venv` an und installiert NetFathom darin editable (siehe [Lokale Entwicklung](#lokale-entwicklung)).
 
 ```bash
 # Hosts im lokalen Netzwerk entdecken (Subnetz wird automatisch erkannt)
-netscanx discover
+netfathom discover
 
 # Mit Port-Scan und Vendor-Lookup
-netscanx discover 192.168.1.0/24 --ports 22,80,443 --vendor
+netfathom discover 192.168.1.0/24 --ports 22,80,443 --vendor
 
 # Netzwerkdienste entdecken (mDNS + SSDP + NetBIOS)
-netscanx services
+netfathom services
 
 # Diagnose ausführen
-netscanx diagnose
+netfathom diagnose
 
 # Speedtest zu einem anderen Host (Server dort zuerst starten)
-netscanx speedtest --server           # auf Host A
-netscanx speedtest 192.168.1.10       # auf Host B
+netfathom speedtest --server           # auf Host A
+netfathom speedtest 192.168.1.10       # auf Host B
 
 # Web-Dashboard starten
-netscanx dashboard
+netfathom dashboard
 ```
 
 ---
 
 ## CLI-Referenz
 
-### `netscanx discover [TARGET]`
+### `netfathom discover [TARGET]`
 
 Aktive Hosts via ARP, ICMP-Ping und Port-Scan entdecken.
 
@@ -154,16 +154,16 @@ Optionen:
 ```
 
 ```bash
-netscanx discover                          # lokales /24 automatisch erkennen
-netscanx discover 10.0.0.0/24             # explizites Subnetz
-sudo netscanx discover --arp --vendor     # ARP + MAC-Vendor-Lookup
-netscanx discover 192.168.1.1 -p 1-65535  # Vollständiger Port-Scan
-netscanx discover --format json > hosts.json
+netfathom discover                          # lokales /24 automatisch erkennen
+netfathom discover 10.0.0.0/24             # explizites Subnetz
+sudo netfathom discover --arp --vendor     # ARP + MAC-Vendor-Lookup
+netfathom discover 192.168.1.1 -p 1-65535  # Vollständiger Port-Scan
+netfathom discover --format json > hosts.json
 ```
 
 MAC-Adressen werden nach jedem Ping aus dem ARP-Cache des Betriebssystems gelesen, daher funktionieren `--vendor` und die Hostname-Auflösung auch ohne root. `sudo`/`--arp` ergänzt nur einen rohen ARP-Sweep für Hosts, die nicht auf ICMP antworten.
 
-### `netscanx services [TARGET]`
+### `netfathom services [TARGET]`
 
 Netzwerkdienste via Multicast- und Broadcast-Protokolle entdecken.
 
@@ -178,25 +178,25 @@ Optionen:
 ```
 
 ```bash
-netscanx services
-netscanx services 192.168.1.0/24 --snmp
-netscanx services --no-netbios --format yaml
+netfathom services
+netfathom services 192.168.1.0/24 --snmp
+netfathom services --no-netbios --format yaml
 ```
 
-### `netscanx speedtest [HOST]`
+### `netfathom speedtest [HOST]`
 
 TCP-Durchsatz, UDP-Paketverlust, Latenz und Jitter messen.
 
 ```bash
 # Zwei-Maschinen P2P-Test:
-netscanx speedtest --server              # auf Host A
-netscanx speedtest 192.168.1.10         # auf Host B
+netfathom speedtest --server              # auf Host A
+netfathom speedtest 192.168.1.10         # auf Host B
 
 # Nur Latenz (kein Server nötig):
-netscanx speedtest 8.8.8.8 --no-tcp --no-udp --pings 50
+netfathom speedtest 8.8.8.8 --no-tcp --no-udp --pings 50
 ```
 
-### `netscanx diagnose`
+### `netfathom diagnose`
 
 Automatische Netzwerk-Diagnose.
 
@@ -209,28 +209,28 @@ Automatische Netzwerk-Diagnose.
 - Doppelte DHCP-Server (liest Lease-Dateien)
 - IPv6-Konnektivität
 
-### `netscanx dashboard`
+### `netfathom dashboard`
 
 Führt beim Start und bei jedem "Rescan" einen Discover-Scan (Hosts, MAC, Vendor, Hostname), einen Services-Scan (mDNS/SSDP) und Diagnostics aus, plus einen Ping/Latenz-Test zu beliebiger IP oder Hostname direkt im Browser.
 
 ```bash
-netscanx dashboard               # http://localhost:8080
-netscanx dashboard --port 9090
+netfathom dashboard               # http://localhost:8080
+netfathom dashboard --port 9090
 ```
 
 Das Dashboard bindet standardmässig an `0.0.0.0` und hat keine Authentifizierung, jeder im selben Netzwerk kann darauf zugreifen und Scans/Pings auslösen. Bei Bedarf mit `--host 127.0.0.1` auf localhost beschränken.
 
-### `netscanx baseline`
+### `netfathom baseline`
 
 Führt einen frischen Scan aus und pinnt ihn als Referenz-Baseline für die Drift-Erkennung.
 
 ```bash
-netscanx baseline --target 10.0.0.0/24
+netfathom baseline --target 10.0.0.0/24
 ```
 
-### `netscanx changes`
+### `netfathom changes`
 
-Zeigt, was sich seit dem letzten Scan oder der gepinnten Baseline verändert hat (neue/verschwundene Geräte, Port-Änderungen, Hostname-/IP-/MAC-/OS-Änderungen, Service-Änderungen). Das ist das Herzstück von NetScanX: nicht "welche Geräte gibt es", sondern "was hat sich verändert".
+Zeigt, was sich seit dem letzten Scan oder der gepinnten Baseline verändert hat (neue/verschwundene Geräte, Port-Änderungen, Hostname-/IP-/MAC-/OS-Änderungen, Service-Änderungen). Das ist das Herzstück von NetFathom: nicht "welche Geräte gibt es", sondern "was hat sich verändert".
 
 ```
 Optionen:
@@ -241,27 +241,27 @@ Optionen:
 ```
 
 ```bash
-netscanx discover --persist          # Scan durchführen und speichern
-netscanx changes                     # was hat sich seit dem letzten gespeicherten Scan geändert
-netscanx baseline                    # aktuellen Zustand als Referenzpunkt pinnen
-netscanx changes --since-baseline    # alles, was sich seit dieser Baseline verändert hat
+netfathom discover --persist          # Scan durchführen und speichern
+netfathom changes                     # was hat sich seit dem letzten gespeicherten Scan geändert
+netfathom baseline                    # aktuellen Zustand als Referenzpunkt pinnen
+netfathom changes --since-baseline    # alles, was sich seit dieser Baseline verändert hat
 ```
 
-### `netscanx assets`
+### `netfathom assets`
 
 Listet das gespeicherte Geräte-Inventar auf (jedes je gesehene Gerät, nicht nur der letzte Scan).
 
 ```bash
-netscanx assets --format json
+netfathom assets --format json
 ```
 
-### `netscanx health [TARGET]`
+### `netfathom health [TARGET]`
 
 Führt Health-Checks aus. Ohne `TARGET`: Gesundheit der lokalen Maschine (Speicherplatz, CPU, RAM, Windows Defender, BitLocker, Windows Update; die letzten drei nur unter Windows, sonst `skipped`). Mit `TARGET`: leichte netzwerk-beobachtbare Gesundheitssignale (Erreichbarkeit, DNS-Antwortzeit, riskante offene Ports wie Telnet/SMB) für diesen Host, ohne Credentials nötig.
 
 ```bash
-netscanx health                 # lokale Maschine
-netscanx health 192.168.1.10    # ein bestimmter Host im Netzwerk
+netfathom health                 # lokale Maschine
+netfathom health 192.168.1.10    # ein bestimmter Host im Netzwerk
 ```
 
 ---
@@ -289,7 +289,7 @@ sudo setcap cap_net_raw+ep .venv/bin/python
 ## Architektur
 
 ```
-netscanx/
+netfathom/
 ├── cli/           → Click-Befehle (discover, services, speedtest, diagnose, dashboard,
 │                     baseline, changes, assets, health)
 ├── scanner/       → Layer-2/3/4-Scan-Module + Privilege-Helpers
@@ -313,26 +313,26 @@ build/               → PyInstaller .spec-Dateien (Windows/macOS/Linux)
 
 ## Portable / USB-Modus
 
-Seit v0.3.0 läuft NetScanX ab einem USB-Stick auf jedem Windows-, macOS- oder Linux-Rechner, ohne Installation. Die Release-Binaries von der [Releases-Seite](https://github.com/9t29zhmwdh-coder/NetScanX/releases) herunterladen und in die Wurzel des Sticks kopieren:
+Seit v0.3.0 läuft NetFathom ab einem USB-Stick auf jedem Windows-, macOS- oder Linux-Rechner, ohne Installation. Die Release-Binaries von der [Releases-Seite](https://github.com/9t29zhmwdh-coder/NetFathom/releases) herunterladen und in die Wurzel des Sticks kopieren:
 
 ```
 USB-Stick-Root/
-├── NetScanX-Start-Windows.exe
-├── NetScanX-Start-macOS
-├── NetScanX-Start-Linux
+├── NetFathom-Start-Windows.exe
+├── NetFathom-Start-macOS
+├── NetFathom-Start-Linux
 └── README.txt
 ```
 
-Auf macOS enthält das Release zusätzlich `NetScanX-Start-macOS.dmg`, ein Disk-Image um dasselbe Binary herum für ein gewohnteres Download-/Mount-Erlebnis. Es ist kein "echter" Installer (es gibt nichts zu installieren, NetScanX bleibt portabel) und zeigt dieselbe Gatekeeper-Warnung wie das rohe Binary.
+Auf macOS enthält das Release zusätzlich `NetFathom-Start-macOS.dmg`, ein Disk-Image um dasselbe Binary herum für ein gewohnteres Download-/Mount-Erlebnis. Es ist kein "echter" Installer (es gibt nichts zu installieren, NetFathom bleibt portabel) und zeigt dieselbe Gatekeeper-Warnung wie das rohe Binary.
 
-Ein Doppelklick auf ein Binary ohne Argumente startet das Dashboard und öffnet den Browser, analog zu `netscanx dashboard`. Ein Aufruf aus dem Terminal mit Argumenten bietet die volle CLI (`NetScanX-Start-Windows.exe discover --arp` usw.). Beim ersten Start entsteht ein `NetScanX-Data/`-Ordner neben dem Binary mit der SQLite-Datenbank. So wandert die Scan-Historie und die Baselines mit dem Stick über verschiedene Rechner. Bei Bedarf mit `--db-path` oder `NETSCANX_DB_PATH` überschreiben.
+Ein Doppelklick auf ein Binary ohne Argumente startet das Dashboard und öffnet den Browser, analog zu `netfathom dashboard`. Ein Aufruf aus dem Terminal mit Argumenten bietet die volle CLI (`NetFathom-Start-Windows.exe discover --arp` usw.). Beim ersten Start entsteht ein `NetFathom-Data/`-Ordner neben dem Binary mit der SQLite-Datenbank. So wandert die Scan-Historie und die Baselines mit dem Stick über verschiedene Rechner. Bei Bedarf mit `--db-path` oder `NETFATHOM_DB_PATH` überschreiben.
 
 Der portable Modus läuft standardmässig unprivilegiert auf fremden Rechnern, genau wie der Non-Root-Fallback der regulären CLI (siehe [Berechtigungen](#berechtigungen) unten).
 
 **Bekannte Einschränkungen:**
 - **Windows:** Die `.exe` ist mit einem selbstsignierten Zertifikat signiert (nicht von einer vertrauenswürdigen CA), löst deshalb weiterhin eine SmartScreen-Warnung aus ("Windows hat den PC geschützt"). Die Signatur garantiert nur, dass die Datei nach dem Signieren nicht verändert wurde, sie stellt kein Herausgeber-Vertrauen her. Auf "Weitere Informationen" → "Trotzdem ausführen" klicken. Eine CA-signierte Version ist eine mögliche zukünftige Verbesserung, siehe [ROADMAP.md](ROADMAP.md).
 - **macOS:** Das Binary und die `.dmg` sind unsigniert und lösen beim ersten Start einen Gatekeeper-Block ("nicht verifizierter Entwickler") aus. Rechtsklick auf die Datei → "Öffnen", um das einmalig zu umgehen.
-- **Linux:** FAT32/exFAT-formatierte USB-Sticks bewahren das Unix-Ausführbar-Bit nicht, daher startet das Binary per Doppelklick eventuell nicht. Zuerst `chmod +x NetScanX-Start-Linux` ausführen, oder im Dateimanager "Als Programm ausführen" wählen.
+- **Linux:** FAT32/exFAT-formatierte USB-Sticks bewahren das Unix-Ausführbar-Bit nicht, daher startet das Binary per Doppelklick eventuell nicht. Zuerst `chmod +x NetFathom-Start-Linux` ausführen, oder im Dateimanager "Als Programm ausführen" wählen.
 
 ---
 
@@ -341,9 +341,9 @@ Der portable Modus läuft standardmässig unprivilegiert auf fremden Rechnern, g
 Alle Befehle unterstützen `--format [table|json|yaml]`:
 
 ```bash
-netscanx discover --format json > scan.json
-netscanx diagnose --format yaml
-netscanx diagnose --format json | python3 -c "import sys,json; d=json.load(sys.stdin); [print(c['name'],c['status']) for c in d['checks']]"
+netfathom discover --format json > scan.json
+netfathom diagnose --format yaml
+netfathom diagnose --format json | python3 -c "import sys,json; d=json.load(sys.stdin); [print(c['name'],c['status']) for c in d['checks']]"
 ```
 
 ---
@@ -359,18 +359,18 @@ bash scripts/dev.sh
 
 # Netzwerkdienste lokal simulieren (kein echtes Netz nötig)
 python tools/test_network.py
-netscanx discover 127.0.0.1 --no-arp --ping --ports 22,80,443,8080
+netfathom discover 127.0.0.1 --no-arp --ping --ports 22,80,443,8080
 ```
 
 ---
 
 ## Deinstallation / Aufräumen
 
-- `pip uninstall netscanx`
-- Lokale Scan-Datenbank löschen: liegt im OS-üblichen Nutzerdatenverzeichnis (z. B. `~/Library/Application Support/netscanx` auf macOS, `~/.local/share/netscanx` auf Linux, `%LOCALAPPDATA%\netscanx` auf Windows), oder setze `NETSCANX_DB_PATH`, um den genauen konfigurierten Pfad zu sehen
-- Portable/USB-Modus: den Launcher und den zugehörigen `NetScanX-Data/`-Ordner löschen; es wird sonst nirgendwo etwas geschrieben
+- `pip uninstall netfathom`
+- Lokale Scan-Datenbank löschen: liegt im OS-üblichen Nutzerdatenverzeichnis (z. B. `~/Library/Application Support/netfathom` auf macOS, `~/.local/share/netfathom` auf Linux, `%LOCALAPPDATA%\netfathom` auf Windows), oder setze `NETFATHOM_DB_PATH`, um den genauen konfigurierten Pfad zu sehen
+- Portable/USB-Modus: den Launcher und den zugehörigen `NetFathom-Data/`-Ordner löschen; es wird sonst nirgendwo etwas geschrieben
 
 ---
 
-**Autor:** [Rafael Yilmaz](https://github.com/9t29zhmwdh-coder) · **Status:** Active · ![version](https://img.shields.io/github/v/release/9t29zhmwdh-coder/NetScanX?color=6b7280&style=flat-square) · **Lizenz:** MIT
+**Autor:** [Rafael Yilmaz](https://github.com/9t29zhmwdh-coder) · **Status:** Active · ![version](https://img.shields.io/github/v/release/9t29zhmwdh-coder/NetFathom?color=6b7280&style=flat-square) · **Lizenz:** MIT
 
