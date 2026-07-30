@@ -9,6 +9,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- The speedtest protocol derives its header length from the magic value instead of hardcoding it. The old magic `NETSCANX` was eight bytes and the code relied on that in two comparisons and one payload calculation; `NETFATHOM` is nine, which made every comparison false and every packet one byte too long. The rename would have silently broken the UDP throughput measurement.
 - Renamed from NetScanX to NetFathom. netscanx.com is an active commercial product that also analyses network traffic, so the collision was in the same category rather than merely a similar word.
 
 ---

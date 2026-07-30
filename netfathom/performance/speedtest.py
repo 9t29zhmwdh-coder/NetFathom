@@ -14,6 +14,10 @@ _TCP_PORT = 15101
 _UDP_PORT = 15102
 _CHUNK = 65536
 _MAGIC = b"NETFATHOM"
+# Laengen werden aus _MAGIC abgeleitet, nicht fest verdrahtet: der Vorgaenger
+# hiess NETSCANX und war zufaellig 8 Bytes lang, worauf sich der Code verliess.
+_SEQ_LEN = 4
+_HEADER = len(_MAGIC) + _SEQ_LEN
 
 
 class SpeedtestServer:
@@ -68,7 +72,7 @@ class _UDPServerProtocol(asyncio.DatagramProtocol):
         self.transport = transport
 
     def datagram_received(self, data: bytes, addr: tuple) -> None:
-        if data[:8] == _MAGIC:
+        if data[: len(_MAGIC)] == _MAGIC:
             self.transport.sendto(data, addr)
 
 
@@ -145,7 +149,7 @@ class SpeedtestClient:
             deadline = t0 + duration
             while time.monotonic() < deadline:
                 seq = struct.pack(">I", sent)
-                payload = _MAGIC + seq + os.urandom(packet_size - 12)
+                payload = _MAGIC + seq + os.urandom(max(0, packet_size - _HEADER))
                 try:
                     await asyncio.wait_for(
                         loop.sock_sendto(sock, payload, (self.host, self.udp_port)),
@@ -158,7 +162,7 @@ class SpeedtestClient:
 
                 try:
                     data, _ = await asyncio.wait_for(loop.sock_recvfrom(sock, 4096), timeout=0.05)
-                    if data[:8] == _MAGIC:
+                    if data[: len(_MAGIC)] == _MAGIC:
                         received += 1
                 except asyncio.TimeoutError:
                     pass
