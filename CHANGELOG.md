@@ -5,6 +5,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-07-31
+
+### Fixed
+
+- Lint and tests ran on Linux only, while the release builds a PyInstaller executable for Linux, macOS and Windows. Five modules branch on `platform.system()` or `sys.platform`, and layer-2 scanning uses raw sockets, which behave differently on Windows. Only the Linux branch was ever executed, so the macOS and Windows paths shipped untested. The check job now runs as a matrix over all three. The formatting check stays on one runner, being platform-independent.
+- The `solo-main-protection` ruleset now requires `Lint & Check (ubuntu-latest)`, `(macos-latest)` and `(windows-latest)` instead of the old single `Lint & Check`. Renaming a job without moving the required context leaves every later pull request permanently unmergeable while looking green.
+
+---
+
 ## [1.1.1] - 2026-07-31
 
 ### Changed
