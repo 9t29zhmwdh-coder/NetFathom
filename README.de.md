@@ -12,9 +12,23 @@
 
 ![Platform](https://img.shields.io/badge/Platform-macOS_%7C_Windows_%7C_Ubuntu-lightgrey) ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![AI | Claude Code](https://img.shields.io/badge/AI-Claude_Code-black?logo=anthropic&logoColor=white) ![AI | Copilot](https://img.shields.io/badge/AI-Copilot-black?logo=github&logoColor=white)
 
-Ein plattformübergreifendes Netzwerk-Discovery- und Diagnose-Toolkit; Hosts entdecken, Dienste aufzählen, Durchsatz messen und Netzwerkprobleme automatisch diagnostizieren, alles über eine einzige CLI.
+**Sagt dir, was sich seit dem letzten Mal im Netzwerk geändert hat.**
 
-Läuft auf **macOS, Linux und Windows**. Kein Build-Schritt nötig, Installation via `pip` (siehe [Schnellstart](#schnellstart) für den plattformspezifischen Installationsweg).
+Die meisten Scanner zeigen, was gerade da ist. NetFathom speichert jeden Scan,
+damit die nützliche Frage beantwortbar wird: welcher Host ist neu, welcher
+Dienst hat einen Port geöffnet, den er letzte Woche nicht hatte, welches Gerät
+antwortet nicht mehr.
+
+```
+netfathom discover          finden, was im Netz ist
+netfathom baseline          diesen Stand als bekannt-gut merken
+netfathom changes           was davon jetzt abweicht
+```
+
+**Nichts für dich, wenn** du einmalig sehen willst, wer online ist. `arp-scan`
+oder `nmap` machen das in einer Zeile und brauchen keine Datenbank.
+
+Läuft auf macOS, Linux und Windows, Installation via `pip`.
 
 > **So läuft es:** Dies ist ein Kommandozeilen-Tool, keine Desktop-App und kein Server. Jeder Scan-Befehl läuft einmal durch und beendet sich, Ergebnisse werden in einer lokalen SQLite-Datenbank für Baseline-/Drift-Vergleiche gespeichert; es gibt keinen Installer und keinen Hintergrundprozess. Das optionale Web-Dashboard (`netfathom dashboard`) ist ein rein lokaler FastAPI-Server, den du selbst startest und stoppst, kein Dauerbetrieb.
 

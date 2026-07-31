@@ -5,6 +5,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-07-31
+
+### Changed
+
+- The README opens with what the tool answers rather than what it contains. It began "a cross-platform Network Discovery and Diagnostic Toolkit" followed by four verbs, which describes any scanner. What distinguishes this one is that it stores every scan, so "what changed since last time" becomes answerable; that is now the first line, with the three commands that get there.
+- The opening names the case this tool is not for: a one-off look at who is online, where `arp-scan` or `nmap` do the job in a line and need no database. The repository description follows.
+
+---
+
 ## [1.1.0] - 2026-07-30
 
 ### Changed
