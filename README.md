@@ -10,9 +10,22 @@
 
 ![Platform](https://img.shields.io/badge/Platform-macOS_%7C_Windows_%7C_Ubuntu-lightgrey) ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![AI | Claude Code](https://img.shields.io/badge/AI-Claude_Code-black?logo=anthropic&logoColor=white) ![AI | Copilot](https://img.shields.io/badge/AI-Copilot-black?logo=github&logoColor=white)
 
-A cross-platform Network Discovery and Diagnostic Toolkit; discover hosts, enumerate services, measure throughput, and auto-diagnose network issues from a single CLI.
+**Tells you what changed on your network since last time.**
 
-Runs on **macOS, Linux, and Windows**. No build step required, install with `pip` (see [Quick Start](#quick-start) for the platform-specific install path).
+Most scanners show you what is there right now. NetFathom stores every scan, so
+the useful question becomes answerable: which host is new, which service opened
+a port it did not have last week, which device stopped answering.
+
+```
+netfathom discover          find what is on the network
+netfathom baseline          remember this as the known-good state
+netfathom changes           what differs from it now
+```
+
+**Not for you if** you want a one-off look at who is online. `arp-scan` or
+`nmap` do that in one line and need no database.
+
+Runs on macOS, Linux and Windows, installs with `pip`.
 
 > **How it runs:** This is a command-line tool, not a desktop app and not a server. Each scan command runs once and exits, persisting results to a local SQLite database for baseline/drift comparison; there is no installer and no background process. The optional web dashboard (`netfathom dashboard`) is a local-only FastAPI server you start and stop yourself, not something always running.
 
