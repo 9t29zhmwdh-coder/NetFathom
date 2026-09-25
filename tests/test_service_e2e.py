@@ -126,6 +126,20 @@ async def test_baseline_pin_and_changes_since_baseline(tmp_path):
 
     since_baseline = await service.get_changes(since_baseline=True)
     assert any(c.change_type == "port_opened" for c in since_baseline)
+    # The baseline scan's own "new_device" is not a change since the baseline.
+    assert not any(c.change_type == "new_device" for c in since_baseline)
+
+
+async def test_reference_target_prefers_the_baseline(tmp_path):
+    service = InventoryService(db_path=tmp_path / "e2e.db")
+    assert await service.reference_target() is None
+
+    host = Host(ip="10.0.0.5", mac="AA:BB:CC:DD:EE:FF", discovered_via=["arp"])
+    run, _ = await service.persist_results(DiscoverResult(target="10.0.0.0/24", hosts=[host]))
+    await service.pin_baseline(run.id)
+    await service.persist_results(DiscoverResult(target="10.0.0.5", hosts=[host]))
+
+    assert await service.reference_target() == "10.0.0.0/24"
 
 
 async def test_list_assets_returns_persisted_devices(tmp_path):

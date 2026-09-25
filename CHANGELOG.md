@@ -5,6 +5,21 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-25
+
+### Fixed
+
+- The three commands the README leads with never reported a change. `baseline` scanned hosts but no ports, so "a service opened a port it did not have last week" could not be detected at all; `changes` only replayed what an earlier stored scan had found and never scanned itself; and `discover` stores nothing without `--persist`. Checked on 127.0.0.1: after `baseline`, opening a port and running `changes` printed "No changes detected".
+- `changes --since-baseline` listed the baseline scan's own events, for example every device as "new", as if they had happened after the baseline.
+- `netfathom --version` and the dashboard API reported 0.3.0, a value typed into the code; both now read the package version.
+
+### Added
+
+- `baseline` and `changes` check 23 common ports per host, changeable with `-p/--ports`.
+- `changes` scans the baseline's target again before it reports, then shows the difference. `--no-scan` keeps the old behaviour of only showing stored changes, `--target` picks another target.
+
+---
+
 ## [1.1.4] - 2026-09-25
 
 ### Security

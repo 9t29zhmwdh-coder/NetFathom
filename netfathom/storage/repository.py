@@ -221,7 +221,9 @@ class InventoryRepository:
             baseline_run = await self.get_baseline_scan_run()
             if baseline_run is None:
                 return []
-            stmt = stmt.where(ChangeEvent.scan_run_id >= baseline_run.id)
+            # The baseline run's own events describe how it differed from
+            # the scans before it, not a change since the baseline.
+            stmt = stmt.where(ChangeEvent.scan_run_id > baseline_run.id)
         elif since_run_id is not None:
             stmt = stmt.where(ChangeEvent.scan_run_id == since_run_id)
 

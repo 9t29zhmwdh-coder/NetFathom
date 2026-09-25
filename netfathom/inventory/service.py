@@ -15,6 +15,14 @@ from netfathom.storage.schema import ChangeEvent, Device, DeviceSnapshot, ScanRu
 _IDENTITY_GRACE_DAYS = 7
 
 
+# Ports that baseline and changes check on every host. Without a port list the
+# discover scan only finds hosts, so "a service opened a port it did not have
+# last week", the case this tool exists for, could never be detected.
+DEFAULT_DRIFT_PORTS = (
+    "21,22,23,25,53,80,110,139,143,443,445,548,631,993,995,1883,3306,3389,5432,5900,8080,8443,9100"
+)
+
+
 def _now() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -201,6 +209,15 @@ class InventoryService:
             if latest is None:
                 return []
             return await repo.get_changes(since_run_id=latest.id)
+
+    async def reference_target(self) -> str | None:
+        """The target of the pinned baseline, else of the latest scan, so a
+        rescan compares like with like."""
+        engine = await self._get_ready_engine()
+        async with get_session(engine) as session:
+            repo = InventoryRepository(session)
+            run = await repo.get_baseline_scan_run() or await repo.get_latest_scan_run()
+            return run.target if run else None
 
     async def list_assets(self) -> list[Device]:
         engine = await self._get_ready_engine()

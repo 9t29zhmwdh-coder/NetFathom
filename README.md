@@ -12,14 +12,14 @@
 
 **Tells you what changed on your network since last time.**
 
-Most scanners show you what is there right now. NetFathom stores every scan, so
+Most scanners show you what is there right now. NetFathom stores its scans, so
 the useful question becomes answerable: which host is new, which service opened
 a port it did not have last week, which device stopped answering.
 
 ```
 netfathom discover          find what is on the network
-netfathom baseline          remember this as the known-good state
-netfathom changes           what differs from it now
+netfathom baseline          scan and remember this as the known-good state
+netfathom changes           scan again and show what differs
 ```
 
 **Not for you if** you want a one-off look at who is online. `arp-scan` or
@@ -57,7 +57,7 @@ Runs on macOS, Linux and Windows, installs with `pip`.
 | **Diagnostics** | DNS errors, duplicate DHCP, routing problems, latency spikes, subnet misconfiguration |
 | **Asset Discovery Plus** | Passive OS-family guess (TTL heuristic) and device-type classification (printer/NAS/router/AP/workstation/server), no extra network calls |
 | **Health Check Engine** | Local machine health (disk/CPU/RAM/Defender/BitLocker/Windows Update) or lightweight network-observable health signals (reachability, DNS response, risky open ports) |
-| **Baseline & Drift Detection** | Persists every scan to a local SQLite database and diffs it against the last scan or a pinned baseline: new/gone devices, port changes, hostname/IP/MAC/OS changes, service changes |
+| **Baseline & Drift Detection** | `baseline` and `changes` scan hosts plus 23 common ports (`-p` to change) and store the result in a local SQLite database; `discover` stores only with `--persist`. Each stored scan is diffed against the last scan or a pinned baseline: new/gone devices, port changes, hostname/IP/MAC/OS changes, service changes |
 | **Dashboard** | Optional web dashboard (FastAPI + Alpine.js + Chart.js), now with Change Report and Asset Inventory views |
 | **Portable Mode** | Single-file launcher for Windows/macOS/Linux, runnable from a USB stick, no install required |
 | **Output** | Rich tables (default), JSON, YAML for automation |
@@ -250,29 +250,34 @@ The dashboard binds to `0.0.0.0` by default and has no authentication, so anyone
 
 ### `netfathom baseline`
 
-Runs a fresh scan and pins it as the reference baseline for drift detection.
+Runs a fresh scan of hosts and 23 common ports and pins it as the reference baseline for drift detection.
 
 ```bash
 netfathom baseline --target 10.0.0.0/24
+netfathom baseline --target 10.0.0.0/24 -p 22,80,443,8080
 ```
 
 ### `netfathom changes`
 
-Shows what changed (new/gone devices, port changes, hostname/IP/MAC/OS changes, service changes) since the last scan or the pinned baseline. This is NetFathom's centerpiece feature: the question it answers is "what changed", not just "what's on the network".
+Scans again (same target as the baseline, same ports) and shows what changed (new/gone devices, port changes, hostname/IP/MAC/OS changes, service changes) since the previous scan or the pinned baseline. This is NetFathom's centerpiece feature: the question it answers is "what changed", not just "what's on the network".
 
 ```
 Options:
   --since-baseline          Show all changes since the pinned baseline
   --since-last               Show changes from the most recent scan  [default]
+  --scan / --no-scan         Scan now before reporting [default], or only show stored changes
+  --target TEXT              Target to rescan  [default: the baseline's target]
+  -p, --ports TEXT           Ports to check per host  [default: 23 common ports]
   --format [table|json|yaml]
   --db-path PATH             Override the SQLite database path
 ```
 
 ```bash
-netfathom discover --persist          # scan and store it
-netfathom changes                     # what changed vs. the previous persisted scan
-netfathom baseline                    # pin the current state as a reference point
-netfathom changes --since-baseline    # everything that drifted since that baseline
+netfathom baseline                    # scan and pin the current state as a reference point
+netfathom changes                     # scan again: what changed vs. the previous scan
+netfathom changes --since-baseline    # scan again: everything that drifted since the baseline
+netfathom changes --no-scan           # only show what the last stored scan found
+netfathom discover --persist          # an ad-hoc scan that is also stored
 ```
 
 ### `netfathom assets`
