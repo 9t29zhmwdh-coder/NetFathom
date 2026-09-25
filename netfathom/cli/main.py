@@ -1,6 +1,7 @@
 import click
 from rich.console import Console
 
+from netfathom import __version__
 from netfathom.cli.assets import assets
 from netfathom.cli.baseline import baseline
 from netfathom.cli.changes import changes
@@ -15,7 +16,7 @@ console = Console()
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
-@click.version_option("0.3.0", prog_name="netfathom")
+@click.version_option(__version__, prog_name="netfathom")
 def cli() -> None:
     """NetFathom: cross-platform network discovery and diagnostic toolkit.
 

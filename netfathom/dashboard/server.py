@@ -15,13 +15,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, field_validator
 
+from netfathom import __version__
 from netfathom.cli.discover import _auto_detect_network, run_discover_scan
 from netfathom.cli.services import run_services_scan
 from netfathom.diagnostics.checks import DiagnosticsRunner
 from netfathom.inventory.service import InventoryService
 from netfathom.scanner.layer3 import ping_stats
 
-app = FastAPI(title="NetFathom Dashboard", version="0.3.0")
+app = FastAPI(title="NetFathom Dashboard", version=__version__)
 
 _inventory = InventoryService()
 

@@ -14,15 +14,15 @@
 
 **Sagt dir, was sich seit dem letzten Mal im Netzwerk geändert hat.**
 
-Die meisten Scanner zeigen, was gerade da ist. NetFathom speichert jeden Scan,
+Die meisten Scanner zeigen, was gerade da ist. NetFathom speichert seine Scans,
 damit die nützliche Frage beantwortbar wird: welcher Host ist neu, welcher
 Dienst hat einen Port geöffnet, den er letzte Woche nicht hatte, welches Gerät
 antwortet nicht mehr.
 
 ```
 netfathom discover          finden, was im Netz ist
-netfathom baseline          diesen Stand als bekannt-gut merken
-netfathom changes           was davon jetzt abweicht
+netfathom baseline          scannen und als bekannt-gut merken
+netfathom changes           erneut scannen und zeigen, was abweicht
 ```
 
 **Nichts für dich, wenn** du einmalig sehen willst, wer online ist. `arp-scan`
@@ -60,7 +60,7 @@ Läuft auf macOS, Linux und Windows, Installation via `pip`.
 | **Diagnostics** | DNS-Fehler, doppelte DHCP-Server, Routing-Probleme, Latenz-Spitzen, Subnetz-Fehlkonfiguration |
 | **Asset Discovery Plus** | Passive OS-Familie-Schätzung (TTL-Heuristik) und Geräte-Typ-Klassifizierung (Drucker/NAS/Router/AP/Workstation/Server), ohne zusätzliche Netzwerk-Calls |
 | **Health Check Engine** | Lokale Maschinen-Gesundheit (Disk/CPU/RAM/Defender/BitLocker/Windows Update) oder leichte netzwerk-beobachtbare Gesundheitssignale (Erreichbarkeit, DNS-Antwortzeit, riskante offene Ports) |
-| **Baseline & Drift Detection** | Speichert jeden Scan lokal in SQLite und vergleicht ihn mit dem letzten Scan oder einer gepinnten Baseline: neue/verschwundene Geräte, Port-Änderungen, Hostname-/IP-/MAC-/OS-Änderungen, Service-Änderungen |
+| **Baseline & Drift Detection** | `baseline` und `changes` scannen Hosts plus 23 gängige Ports (`-p` zum Ändern) und speichern das Ergebnis lokal in SQLite; `discover` speichert nur mit `--persist`. Jeder gespeicherte Scan wird verglichen mit dem letzten Scan oder einer gepinnten Baseline: neue/verschwundene Geräte, Port-Änderungen, Hostname-/IP-/MAC-/OS-Änderungen, Service-Änderungen |
 | **Dashboard** | Optionales Web-Dashboard (FastAPI + Alpine.js + Chart.js), jetzt mit Change-Report- und Asset-Inventory-Ansicht |
 | **Portable Mode** | Einzeldatei-Launcher für Windows/macOS/Linux, lauffähig ab USB-Stick, keine Installation nötig |
 | **Output** | Rich-Tabellen (Standard), JSON, YAML für Automatisierung |
@@ -244,21 +244,25 @@ netfathom baseline --target 10.0.0.0/24
 
 ### `netfathom changes`
 
-Zeigt, was sich seit dem letzten Scan oder der gepinnten Baseline verändert hat (neue/verschwundene Geräte, Port-Änderungen, Hostname-/IP-/MAC-/OS-Änderungen, Service-Änderungen). Das ist das Herzstück von NetFathom: nicht "welche Geräte gibt es", sondern "was hat sich verändert".
+Scannt erneut (gleiches Ziel wie die Baseline, gleiche Ports) und zeigt, was sich seit dem vorherigen Scan oder der gepinnten Baseline verändert hat (neue/verschwundene Geräte, Port-Änderungen, Hostname-/IP-/MAC-/OS-Änderungen, Service-Änderungen). Das ist das Herzstück von NetFathom: nicht "welche Geräte gibt es", sondern "was hat sich verändert".
 
 ```
 Optionen:
   --since-baseline           Alle Änderungen seit der gepinnten Baseline anzeigen
   --since-last                Änderungen seit dem letzten Scan anzeigen  [Standard]
+  --scan / --no-scan          Vorher neu scannen [Standard] oder nur Gespeichertes zeigen
+  --target TEXT               Neu zu scannendes Ziel  [Standard: Ziel der Baseline]
+  -p, --ports TEXT            Zu prüfende Ports pro Host  [Standard: 23 gängige Ports]
   --format [table|json|yaml]
   --db-path PATH              SQLite-Datenbankpfad überschreiben
 ```
 
 ```bash
-netfathom discover --persist          # Scan durchführen und speichern
-netfathom changes                     # was hat sich seit dem letzten gespeicherten Scan geändert
-netfathom baseline                    # aktuellen Zustand als Referenzpunkt pinnen
-netfathom changes --since-baseline    # alles, was sich seit dieser Baseline verändert hat
+netfathom baseline                    # scannen und aktuellen Zustand als Referenzpunkt pinnen
+netfathom changes                     # erneut scannen: was hat sich seit dem vorherigen Scan geändert
+netfathom changes --since-baseline    # erneut scannen: alles, was sich seit der Baseline verändert hat
+netfathom changes --no-scan           # nur zeigen, was der letzte gespeicherte Scan fand
+netfathom discover --persist          # ein spontaner Scan, der ebenfalls gespeichert wird
 ```
 
 ### `netfathom assets`

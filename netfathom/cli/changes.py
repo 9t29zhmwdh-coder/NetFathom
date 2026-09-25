@@ -8,7 +8,8 @@ from pathlib import Path
 import click
 from rich.console import Console
 
-from netfathom.inventory.service import InventoryService
+from netfathom.cli.discover import _auto_detect_network
+from netfathom.inventory.service import DEFAULT_DRIFT_PORTS, InventoryService
 from netfathom.output import emit_json, emit_yaml, print_changes
 
 console = Console(stderr=True)
@@ -22,15 +23,40 @@ console = Console(stderr=True)
     default=True,
     help="Show changes from the most recent scan [default]",
 )
+@click.option(
+    "--scan/--no-scan",
+    default=True,
+    help="Scan now and store the result first [default]; --no-scan only reports stored changes",
+)
+@click.option("--target", default=None, help="Target to rescan [default: the baseline's target]")
+@click.option(
+    "-p", "--ports", default=DEFAULT_DRIFT_PORTS, show_default=True, help="Ports to check per host"
+)
 @click.option("--format", "fmt", default="table", type=click.Choice(["table", "json", "yaml"]))
 @click.option("--db-path", default=None, help="Override the SQLite database path")
-def changes(since_baseline: bool, since_last: bool, fmt: str, db_path: str | None) -> None:
-    """Show devices/ports/services that changed since the last scan or the pinned baseline."""
-    asyncio.run(_run(since_baseline, fmt, db_path))
+def changes(
+    since_baseline: bool,
+    since_last: bool,
+    scan: bool,
+    target: str | None,
+    ports: str,
+    fmt: str,
+    db_path: str | None,
+) -> None:
+    """Scan now and show devices/ports/services that changed since the last scan or the baseline."""
+    asyncio.run(_run(since_baseline, scan, target, ports, fmt, db_path))
 
 
-async def _run(since_baseline: bool, fmt: str, db_path: str | None) -> None:
+async def _run(
+    since_baseline: bool, scan: bool, target: str | None, ports: str, fmt: str, db_path: str | None
+) -> None:
     service = InventoryService(db_path=Path(db_path) if db_path else None)
+    if scan:
+        # Without a fresh scan this would only replay what an earlier stored
+        # scan found, and "what differs now" would stay unanswered.
+        target = target or await service.reference_target() or _auto_detect_network()
+        with console.status(f"[bold green]Scanning {target}…"):
+            await service.run_and_persist(target, discover_kwargs={"port_spec": ports})
     change_events = await service.get_changes(since_baseline=since_baseline)
     devices = {d.id: d for d in await service.list_assets()}
 
