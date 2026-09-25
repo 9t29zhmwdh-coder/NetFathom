@@ -5,6 +5,18 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.1.4] - 2026-09-25
+
+### Security
+
+- Every action in the CI and release workflows is pinned to a full commit SHA instead of a moving tag like `@v7`. A tag can be moved to different code at any time; the SHA cannot. The pinned commits are exactly what `v7`/`v8` point to today, so nothing changes in behaviour, and Dependabot keeps proposing updates as reviewable pull requests.
+
+### Fixed
+
+- The version was out of step: `pyproject.toml` said 1.1.2 and `netfathom.__version__` 0.3.7. Both now say 1.1.4.
+
+---
+
 ## [1.1.3] - 2026-08-04
 
 ### Fixed

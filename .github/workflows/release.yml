@@ -24,8 +24,8 @@ jobs:
             artifact: NetFathom-Start-Linux
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
       - name: Install build dependencies
@@ -53,14 +53,14 @@ jobs:
           chmod +x "dmg-root/${{ matrix.artifact }}"
           hdiutil create -volname "NetFathom" -srcfolder dmg-root -ov -format UDZO "dist/NetFathom-Start-macOS.dmg"
       - name: Upload build artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ matrix.artifact }}
           path: dist/${{ matrix.artifact }}
           if-no-files-found: error
       - name: Upload DMG artifact (macOS only)
         if: matrix.os == 'macos-latest'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: NetFathom-Start-macOS.dmg
           path: dist/NetFathom-Start-macOS.dmg
@@ -75,9 +75,9 @@ jobs:
       # als zu weite Token-Berechtigung bemaengelt.
       contents: write
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Download all build artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: artifacts
       - name: Flatten artifact layout
