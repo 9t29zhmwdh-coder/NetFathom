@@ -1,0 +1,7 @@
+# Build tools for the release workflow's PyInstaller job, locked with the
+# "build" extra into requirements/release.txt. Regenerate with the command
+# in release.txt's header.
+pip
+setuptools
+hatchling
+editables

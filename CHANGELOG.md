@@ -5,6 +5,17 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-09-27
+
+### Security
+
+- Every package the CI and the release build install now comes from `requirements/ci.txt` with its hash checked (`pip install --require-hashes`). Before, the workflows took whatever version the package index served at that moment, which OpenSSF Scorecard marks down under pinned dependencies. The project itself is installed with `--no-deps`.
+- CI checks that `requirements/ci.txt` still matches `pyproject.toml`, starting from the committed pins, so a changed dependency cannot slip past the lock. Dependabot keeps the pins current.
+- The release workflow installs PyInstaller and NetFathom's dependencies from `requirements/release.txt` with hashes, and `scripts/dev.sh` / `scripts/dev.ps1` set up a fresh venv from the same lock as CI. Editable installs use `--no-build-isolation`, so the pinned hatchling builds them instead of one downloaded on the fly.
+- CI now runs `pip-audit` against the installed dependencies; before, no step checked them for known vulnerabilities.
+
+---
+
 ## [1.2.1] - 2026-09-27
 
 ### Changed

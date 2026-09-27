@@ -4,8 +4,9 @@ set -e
 
 if [ ! -d ".venv" ]; then
   python3 -m venv .venv
-  .venv/bin/pip install --upgrade pip
-  .venv/bin/pip install -e ".[dev]"
+  # Same hashed lock as CI, so a fresh venv gets exactly the tested versions.
+  .venv/bin/python -m pip install --require-hashes -r requirements/ci.txt
+  .venv/bin/python -m pip install --no-deps --no-build-isolation -e .
 fi
 
 echo "NetFathom venv ready."
