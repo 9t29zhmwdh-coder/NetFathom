@@ -5,6 +5,18 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-09-27
+
+### Changed
+
+Dependency and CI updates merged since v1.2.0, each with green checks:
+
+- chore(ci): bump the actions group across 1 directory with 3 updates (#50)
+- chore(deps): bump ruff from 0.16.1 to 0.16.8 in the python group (#53)
+- chore(deps): bump ruff from 0.16.0 to 0.16.1 in the python group (#49)
+
+---
+
 ## [1.2.0] - 2026-09-25
 
 ### Fixed
