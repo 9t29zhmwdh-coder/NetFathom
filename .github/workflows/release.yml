@@ -28,8 +28,13 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
-      - name: Install build dependencies
-        run: pip install -e ".[build]"
+      # PyInstaller and NetFathom's dependencies come from requirements/release.txt
+      # with their hashes checked; python -m pip because pip.exe cannot replace
+      # itself on Windows.
+      - name: Install pinned build dependencies
+        run: |
+          python -m pip install --require-hashes -r requirements/release.txt
+          python -m pip install --no-deps --no-build-isolation -e .
       - name: Build portable launcher
         run: pyinstaller ${{ matrix.spec }} --noconfirm --distpath dist --workpath build/_work
       - name: Sign Windows executable (self-signed, no CA)

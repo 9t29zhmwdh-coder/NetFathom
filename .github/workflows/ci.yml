@@ -27,8 +27,26 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
-      - name: Install dependencies
-        run: pip install -e ".[dev]"
+      # Every package, the build backend included, comes from
+      # requirements/ci.txt with its hash checked; NetFathom itself is
+      # installed without resolving or downloading anything further.
+      # python -m pip, because pip.exe cannot replace itself on Windows.
+      - name: Install pinned dependencies and tools
+        run: |
+          python -m pip install --require-hashes -r requirements/ci.txt
+          python -m pip install --no-deps --no-build-isolation -e .
+      - name: Lock files match pyproject.toml
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cp requirements/ci.txt fresh-ci.txt
+          uv pip compile pyproject.toml requirements/tools.in --extra dev --universal --python-version 3.11 --generate-hashes -q --custom-compile-command "uv pip compile pyproject.toml requirements/tools.in --extra dev --universal --python-version 3.11 --generate-hashes -o requirements/ci.txt" -o fresh-ci.txt
+          diff requirements/ci.txt fresh-ci.txt
+          cp requirements/release.txt fresh-release.txt
+          uv pip compile pyproject.toml requirements/release-tools.in --extra build --universal --python-version 3.11 --generate-hashes -q --custom-compile-command "uv pip compile pyproject.toml requirements/release-tools.in --extra build --universal --python-version 3.11 --generate-hashes -o requirements/release.txt" -o fresh-release.txt
+          diff requirements/release.txt fresh-release.txt
+      - name: Dependency audit (pip-audit)
+        if: matrix.os == 'ubuntu-latest'
+        run: pip-audit --skip-editable
       - name: Lint (ruff)
         run: ruff check --output-format=github .
       - name: Format check (ruff)

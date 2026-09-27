@@ -1,8 +1,9 @@
 # Local development, Windows PowerShell
 if (-not (Test-Path ".venv")) {
     python -m venv .venv
-    .\.venv\Scripts\pip install --upgrade pip
-    .\.venv\Scripts\pip install -e ".[dev]"
+    # Same hashed lock as CI, so a fresh venv gets exactly the tested versions.
+    .\.venv\Scripts\python -m pip install --require-hashes -r requirements/ci.txt
+    .\.venv\Scripts\python -m pip install --no-deps --no-build-isolation -e .
 }
 
 Write-Host "NetFathom venv ready."
