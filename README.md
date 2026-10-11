@@ -6,7 +6,7 @@
 
 [🇩🇪 Deutsche Version](README.de.md)
 
-[![CI](https://github.com/9t29zhmwdh-coder/NetFathom/actions/workflows/ci.yml/badge.svg)](https://github.com/9t29zhmwdh-coder/NetFathom/actions) [![CodeQL](https://github.com/9t29zhmwdh-coder/NetFathom/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/9t29zhmwdh-coder/NetFathom/security/code-scanning) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/9t29zhmwdh-coder/NetFathom/badge)](https://securityscorecards.dev/viewer/?uri=github.com/9t29zhmwdh-coder/NetFathom) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13692/badge)](https://www.bestpractices.dev/projects/13692)
+[![CI](https://github.com/9t29zhmwdh-coder/NetFathom/actions/workflows/ci.yml/badge.svg)](https://github.com/9t29zhmwdh-coder/NetFathom/actions) [![CodeQL](https://github.com/9t29zhmwdh-coder/NetFathom/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/9t29zhmwdh-coder/NetFathom/security/code-scanning) [![OpenSSF Scorecard 7.0/10](docs/badges/openssf-scorecard.svg)](https://securityscorecards.dev/viewer/?uri=github.com/9t29zhmwdh-coder/NetFathom) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13692/badge)](https://www.bestpractices.dev/projects/13692)
 
 ![Platform](https://img.shields.io/badge/Platform-macOS_%7C_Windows_%7C_Ubuntu-lightgrey) ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![AI | Claude Code](https://img.shields.io/badge/AI-Claude_Code-black?logo=anthropic&logoColor=white) ![AI | Copilot](https://img.shields.io/badge/AI-Copilot-black?logo=github&logoColor=white)
 
