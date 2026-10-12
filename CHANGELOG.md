@@ -5,6 +5,17 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.2.4] - 2026-10-12
+
+### Changed
+
+Dependency and CI updates merged since v1.2.3, each with green checks:
+
+- chore(ci): bump the actions group with 5 updates (#58)
+- chore(deps): bump the python group with the lock files regenerated
+
+---
+
 ## [1.2.3] - 2026-10-11
 
 ### Fixed
